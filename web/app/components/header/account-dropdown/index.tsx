@@ -18,7 +18,7 @@ type AccountDropdownProps = {
 }
 
 const mainNavMenuPopupClassName =
-  'w-60 max-w-80 overflow-hidden bg-components-panel-bg-blur! p-0! backdrop-blur-[5px]'
+  'w-60 max-w-96 overflow-hidden bg-components-panel-bg-blur! p-0! backdrop-blur-[5px]'
 
 const subscribeHydrationState = () => () => {}
 const getHydrationSnapshot = () => false
