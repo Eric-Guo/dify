@@ -39,7 +39,7 @@ type AccountMenuProps = {
   trigger: (props: { ariaLabel: string }) => ReactElement
 }
 
-const mainNavMenuPopupClassName = 'w-60 max-w-80 overflow-hidden p-0'
+const mainNavMenuPopupClassName = 'w-60 max-w-96 overflow-hidden p-0'
 
 const subscribeHydrationState = () => () => {}
 const getHydrationSnapshot = () => false
