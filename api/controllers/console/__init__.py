@@ -35,6 +35,7 @@ for module_name in RESOURCE_MODULES:
 from . import (
     admin,
     apikey,
+    enterprise_webapp,
     extension,
     feature,
     init_validate,
