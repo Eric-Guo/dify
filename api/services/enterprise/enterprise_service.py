@@ -4,6 +4,7 @@ import logging
 import uuid
 from datetime import datetime
 
+import httpx
 from cachetools.func import ttl_cache
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -264,19 +265,40 @@ class EnterpriseService:
         @classmethod
         def is_user_allowed_to_access_webapp(cls, user_id: str, app_id: str):
             params = {"userId": user_id, "appId": app_id}
-            data = EnterpriseRequest.send_request("GET", "/webapp/permission", params=params)
+            try:
+                data = EnterpriseRequest.send_request("GET", "/webapp/permission", params=params)
+            except (ValueError, httpx.HTTPError) as exc:
+                logger.warning("Failed to fetch enterprise webapp permission for %s: %s", app_id, exc)
+                return False
 
-            return data.get("result", False)
+            if not isinstance(data, dict):
+                logger.warning("Unexpected enterprise webapp permission payload: %r", data)
+                return False
+
+            result = data.get("result")
+            return bool(result)
 
         @classmethod
         def batch_is_user_allowed_to_access_webapps(cls, user_id: str, app_ids: list[str]):
             if not app_ids:
                 return {}
             body = {"userId": user_id, "appIds": app_ids}
-            data = EnterpriseRequest.send_request("POST", "/webapp/permission/batch", json=body)
-            if not data:
-                raise ValueError("No data found.")
-            return data.get("permissions", {})
+            try:
+                data = EnterpriseRequest.send_request("POST", "/webapp/permission/batch", json=body)
+            except (ValueError, httpx.HTTPError) as exc:
+                logger.warning("Failed to fetch enterprise webapp permissions for %s: %s", app_ids, exc)
+                return {}
+
+            if not isinstance(data, dict):
+                logger.warning("Unexpected enterprise webapp permissions payload: %r", data)
+                return {}
+
+            permissions = data.get("permissions")
+            if not isinstance(permissions, dict):
+                logger.warning("Enterprise webapp permissions missing 'permissions': %r", data)
+                return {}
+
+            return permissions
 
         @classmethod
         def get_app_access_mode_by_id(cls, app_id: str) -> WebAppSettings:
@@ -293,15 +315,23 @@ class EnterpriseService:
             if not app_ids:
                 return {}
             body = {"appIds": app_ids}
-            data: dict[str, str] = EnterpriseRequest.send_request("POST", "/webapp/access-mode/batch/id", json=body)
-            if not data:
-                raise ValueError("No data found.")
+            try:
+                data = EnterpriseRequest.send_request("POST", "/webapp/access-mode/batch/id", json=body)
+            except (ValueError, httpx.HTTPError) as exc:
+                logger.warning("Failed to fetch enterprise webapp access modes for %s: %s", app_ids, exc)
+                return {}
 
-            if not isinstance(data["accessModes"], dict):
-                raise ValueError("Invalid data format.")
+            if not isinstance(data, dict):
+                logger.warning("Unexpected enterprise access modes payload: %r", data)
+                return {}
 
-            ret = {}
-            for key, value in data["accessModes"].items():
+            access_modes = data.get("accessModes")
+            if not isinstance(access_modes, dict):
+                logger.warning("Enterprise access modes missing 'accessModes': %r", data)
+                return {}
+
+            ret: dict[str, WebAppSettings] = {}
+            for key, value in access_modes.items():
                 curr = WebAppSettings()
                 curr.access_mode = value
                 ret[key] = curr
@@ -309,14 +339,22 @@ class EnterpriseService:
             return ret
 
         @classmethod
-        def update_app_access_mode(cls, app_id: str, access_mode: str):
+        def update_app_access_mode(
+            cls,
+            app_id: str,
+            access_mode: str,
+            subjects: list[dict] | None = None,
+        ):
             if not app_id:
                 raise ValueError("app_id must be provided.")
-            allowed = {WebAppAccessMode.PUBLIC, WebAppAccessMode.PRIVATE, WebAppAccessMode.PRIVATE_ALL}
-            if access_mode not in allowed:
-                raise ValueError(f"access_mode must be one of: {', '.join(m.value for m in allowed)}")
+            if access_mode not in ["public", "private", "private_all", "sso_verified"]:
+                raise ValueError(
+                    "access_mode must be one of 'public', 'private', 'private_all', or 'sso_verified'"
+                )
 
-            data = {"appId": app_id, "accessMode": access_mode}
+            data: dict = {"appId": app_id, "accessMode": access_mode}
+            if subjects:
+                data["subjects"] = subjects
 
             response = EnterpriseRequest.send_request("POST", "/webapp/access-mode", json=data)
 
@@ -329,6 +367,32 @@ class EnterpriseService:
 
             params = {"appId": app_id}
             EnterpriseRequest.send_request("DELETE", "/webapp/clean", params=params)
+
+        @classmethod
+        def get_app_whitelist_subjects(cls, app_id: str) -> dict:
+            if not app_id:
+                raise ValueError("app_id must be provided.")
+            params = {"appId": app_id}
+            return EnterpriseRequest.send_request("GET", "/webapp/app/subjects", params=params)
+
+        @classmethod
+        def search_subjects(
+            cls,
+            keyword: str | None = None,
+            group_id: str | None = None,
+            results_per_page: int | None = None,
+            page_number: int | None = None,
+        ) -> dict:
+            params: dict = {}
+            if keyword:
+                params["keyword"] = keyword
+            if group_id:
+                params["groupId"] = group_id
+            if results_per_page is not None:
+                params["resultsPerPage"] = results_per_page
+            if page_number is not None:
+                params["pageNumber"] = page_number
+            return EnterpriseRequest.send_request("GET", "/webapp/app/subject/search", params=params)
 
         @classmethod
         def list_externally_accessible_apps(
