@@ -370,6 +370,7 @@ def _register_controllers() -> tuple[ModuleType, ...]:
 
 (
     apikey,
+    enterprise_webapp,
     extension,
     feature,
     human_input_form,
