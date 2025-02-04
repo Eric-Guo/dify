@@ -21,7 +21,7 @@
     "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/public && cross-env PORT=$npm_config_port HOSTNAME=$npm_config_host node .next/standalone/server.js",
-    "lint": "pnpm eslint --cache --cache-location node_modules/.cache/eslint/.eslint-cache",
+    "lint": "yarn run eslint",
     "lint-only-show-error": "pnpm eslint --cache --cache-location node_modules/.cache/eslint/.eslint-cache --quiet",
     "fix": "next lint --fix",
     "eslint-fix": "eslint --cache --cache-location node_modules/.cache/eslint/.eslint-cache --fix",
@@ -35,8 +35,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "preinstall": "npx only-allow pnpm"
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@babel/runtime": "^7.22.3",
@@ -242,5 +241,6 @@
       "prismjs@<1.30.0": "1.30.0",
       "brace-expansion@<2.0.2": "2.0.2"
     }
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
