@@ -3203,17 +3203,17 @@
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
 
-"@tanstack/form-core@1.11.2":
-  version "1.11.2"
-  resolved "https://registry.npmmirror.com/@tanstack/form-core/-/form-core-1.11.2.tgz#e7e6e1b445b2b60171b6aa1de49a92bfb51b2b5a"
-  integrity sha512-HAocV5E6y4EHisH6qPvredkr2X5ARULDLWx8Z7Jz9pNz0bUBzUjPF/QtVBHQKrYMrwl9cE+TxddcghjiQYDsmQ==
+"@tanstack/form-core@1.11.3":
+  version "1.11.3"
+  resolved "https://registry.npmmirror.com/@tanstack/form-core/-/form-core-1.11.3.tgz#6c5b25f1603beecc429048e35c9b6d72e29257c4"
+  integrity sha512-2CW7PBjeLUGIqiri5FQmFZ4E45M6qeZaziPWkCi9+JXfxHdOgprh3IjbOREAI4i9APIJ2cmGhOOWBoHu6NJOFA==
   dependencies:
     "@tanstack/store" "^0.7.0"
 
-"@tanstack/query-core@5.76.0":
-  version "5.76.0"
-  resolved "https://registry.npmmirror.com/@tanstack/query-core/-/query-core-5.76.0.tgz#3b4d5d34ce307ba0cf7d1a3e90d7adcdc6c46be0"
-  integrity sha512-FN375hb8ctzfNAlex5gHI6+WDXTNpe0nbxp/d2YJtnP+IBM6OUm7zcaoCW6T63BawGOYZBbKC0iPvr41TteNVg==
+"@tanstack/query-core@5.76.2":
+  version "5.76.2"
+  resolved "https://registry.npmmirror.com/@tanstack/query-core/-/query-core-5.76.2.tgz#67439edc48ff5a654c8e25979be4660e6402130b"
+  integrity sha512-PFGwWh5ss9cJQ67l6bZ7hqXbisX2gy13G2jP+VGY1bgdbCfOMWh6UBVnN62QbFXro6CCoX9hYzTnZHr6Rz00YQ==
 
 "@tanstack/query-devtools@5.76.0":
   version "5.76.0"
@@ -3221,28 +3221,28 @@
   integrity sha512-1p92nqOBPYVqVDU0Ua5nzHenC6EGZNrLnB2OZphYw8CNA1exuvI97FVgIKON7Uug3uQqvH/QY8suUKpQo8qHNQ==
 
 "@tanstack/react-form@^1.3.3":
-  version "1.11.2"
-  resolved "https://registry.npmmirror.com/@tanstack/react-form/-/react-form-1.11.2.tgz#1712471d0208940abb12dfc5b30a99854ebed324"
-  integrity sha512-sayEGMKhII3j2O9d73i0R+WI9k2E4vxYOA/QdVrYAlfZO5DTYDdZCkr1KYvzs7e1joYKaaiOyQoq8LXLdp5rIA==
+  version "1.11.3"
+  resolved "https://registry.npmmirror.com/@tanstack/react-form/-/react-form-1.11.3.tgz#75b6372794433a7d31dcd0a9b92cb314539fae3a"
+  integrity sha512-wSH2lSiwddvwp/xCyE8tJkBgQ5jT44lJ86dYFuVXHyX5DTPP/dWJZBLQ7f/d30/+xLvnxvfJEiJvfiB0+JxGtw==
   dependencies:
-    "@tanstack/form-core" "1.11.2"
+    "@tanstack/form-core" "1.11.3"
     "@tanstack/react-store" "^0.7.0"
     decode-formdata "^0.9.0"
     devalue "^5.1.1"
 
 "@tanstack/react-query-devtools@^5.60.5":
-  version "5.76.1"
-  resolved "https://registry.npmmirror.com/@tanstack/react-query-devtools/-/react-query-devtools-5.76.1.tgz#20157a5880df5fd4d4fe8fd4fca2c8663d8dfa3e"
-  integrity sha512-LFVWgk/VtXPkerNLfYIeuGHh0Aim/k9PFGA+JxLdRaUiroQ4j4eoEqBrUpQ1Pd/KXoG4AB9vVE/M6PUQ9vwxBQ==
+  version "5.76.2"
+  resolved "https://registry.npmmirror.com/@tanstack/react-query-devtools/-/react-query-devtools-5.76.2.tgz#a11f33dd155beec36f827b01d79048df9fe9c0d2"
+  integrity sha512-XQqPM7ByqhitYtzzRXpFcPXY2FIMGY13atJoQnDInxX+ko7wOhAJg51QGzSxQwZ2JEy91taj0IaIUh3pOz2buw==
   dependencies:
     "@tanstack/query-devtools" "5.76.0"
 
 "@tanstack/react-query@^5.60.5":
-  version "5.76.1"
-  resolved "https://registry.npmmirror.com/@tanstack/react-query/-/react-query-5.76.1.tgz#ac8a19f99dfec1452a44fe22d46680c396c21152"
-  integrity sha512-YxdLZVGN4QkT5YT1HKZQWiIlcgauIXEIsMOTSjvyD5wLYK8YVvKZUPAysMqossFJJfDpJW3pFn7WNZuPOqq+fw==
+  version "5.76.2"
+  resolved "https://registry.npmmirror.com/@tanstack/react-query/-/react-query-5.76.2.tgz#3fd2247648f5332f1c203554b639b83c0c00039d"
+  integrity sha512-rGkWberCrFdIxMdvSAJM/UOKeu0O/JVTbMmfhQoJpiU9Uq0EDx2EMCadnNuJWbXR4smDA2t7DY3NKkYFmDVS5A==
   dependencies:
-    "@tanstack/query-core" "5.76.0"
+    "@tanstack/query-core" "5.76.2"
 
 "@tanstack/react-store@^0.7.0":
   version "0.7.0"
@@ -11634,9 +11634,9 @@ react-draggable@4.4.6:
     prop-types "^15.8.1"
 
 react-easy-crop@^5.1.0:
-  version "5.4.1"
-  resolved "https://registry.npmmirror.com/react-easy-crop/-/react-easy-crop-5.4.1.tgz#41aebb2d602dc3cdf2c2c17df1af776c40188ce0"
-  integrity sha512-Djtsi7bWO75vkKYkVxNRrJWY69pXLahIAkUN0mmt9cXNnaq2tpG59ctSY6P7ipJgBc7COJDRMRuwb2lYwtACNQ==
+  version "5.4.2"
+  resolved "https://registry.npmmirror.com/react-easy-crop/-/react-easy-crop-5.4.2.tgz#94266ee3a669d3867455ceaeaf9c29bd6dd097d9"
+  integrity sha512-V+GQUTkNWD8gK0mbZQfwTvcDxyCB4GS0cM36is8dAcvnsHY7DMEDP2D5IqHju55TOiCHwElJPVOYDgiu8BEiHQ==
   dependencies:
     normalize-wheel "^1.0.1"
     tslib "^2.0.1"
@@ -11678,9 +11678,9 @@ react-hotkeys-hook@^4.6.1:
   integrity sha512-FmP+ZriY3EG59Ug/lxNfrObCnW9xQShgk7Nb83+CkpfkcCpfS95ydv+E9JuXA5cp8KtskU7LGlIARpkc92X22Q==
 
 react-i18next@^15.1.0:
-  version "15.5.1"
-  resolved "https://registry.npmmirror.com/react-i18next/-/react-i18next-15.5.1.tgz#ceada755a0b6691432b6b6dc5dad454fd3d158e3"
-  integrity sha512-C8RZ7N7H0L+flitiX6ASjq9p5puVJU1Z8VyL3OgM/QOMRf40BMZX+5TkpxzZVcTmOLPX5zlti4InEX5pFyiVeA==
+  version "15.5.2"
+  resolved "https://registry.npmmirror.com/react-i18next/-/react-i18next-15.5.2.tgz#2cfbd8e055efea077a7cbd7fbd9528c76d31925e"
+  integrity sha512-ePODyXgmZQAOYTbZXQn5rRsSBu3Gszo69jxW6aKmlSgxKAI1fOhDwSu6bT4EKHciWPKQ7v7lPrjeiadR6Gi+1A==
   dependencies:
     "@babel/runtime" "^7.25.0"
     html-parse-stringify "^3.0.1"
