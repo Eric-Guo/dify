@@ -2309,7 +2309,14 @@
   resolved "https://registry.npmmirror.com/@next/env/-/env-15.2.3.tgz#037ee37c4d61fcbdbb212694cc33d7dcf6c7975a"
   integrity sha512-a26KnbW9DFEUsSxAxKBORR/uD9THoYoKbkpFywMN/AFvboTt94b8+g/07T8J6ACsdLag8/PDU60ov4rPxRAixw==
 
-"@next/eslint-plugin-next@15.3.2", "@next/eslint-plugin-next@^15.2.3":
+"@next/eslint-plugin-next@15.1.8":
+  version "15.1.8"
+  resolved "https://registry.npmmirror.com/@next/eslint-plugin-next/-/eslint-plugin-next-15.1.8.tgz#f744aeb320e43e64ed054f0a44a4d56140a963f8"
+  integrity sha512-1VC0ctUmwQjI9gZJRQgw2c8GKkr4+DTXVu2yLje3PpFfnxnuuZ8Mrv1Whn9tF+CYkMHiEgCaqyGvT44qYNLVcw==
+  dependencies:
+    fast-glob "3.3.1"
+
+"@next/eslint-plugin-next@^15.2.3":
   version "15.3.2"
   resolved "https://registry.npmmirror.com/@next/eslint-plugin-next/-/eslint-plugin-next-15.3.2.tgz#6a371b022d6de47f2bafc868c7c2220f4e6a2903"
   integrity sha512-ijVRTXBgnHT33aWnDtmlG+LJD+5vhc9AKTJPquGG5NKXjpKNjc62woIhFtrAcWdBobt8kqjCoaJ0q6sDQoX7aQ==
@@ -5279,9 +5286,9 @@ chownr@^2.0.0:
   integrity sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==
 
 chromatic@^11.15.0:
-  version "11.28.2"
-  resolved "https://registry.npmmirror.com/chromatic/-/chromatic-11.28.2.tgz#c0b9f59dcc323ca8bf2c2790f3c9e3d285834efb"
-  integrity sha512-aCmUPcZUs4/p9zRZdMreOoO/5JqO2DiJC3md1/vRx8dlMRcmR/YI5ZbgXZcai2absVR+6hsXZ5XiPxV2sboTuQ==
+  version "11.28.3"
+  resolved "https://registry.npmmirror.com/chromatic/-/chromatic-11.28.3.tgz#a9bed824ba6c3dbfa8aa328da3806a3c9245f279"
+  integrity sha512-ZElcGK0jXLNCtF4UU63qOG97lrjvqiM+PeJrQ8++PtuQodzyzk7Kuw8AkDIZekIPIWSk2YJ5h0Zhqkp3vpYAtw==
 
 chrome-trace-event@^1.0.2:
   version "1.0.4"
@@ -6382,9 +6389,9 @@ echarts@^5.5.1:
     zrender "5.6.1"
 
 electron-to-chromium@^1.5.149:
-  version "1.5.155"
-  resolved "https://registry.npmmirror.com/electron-to-chromium/-/electron-to-chromium-1.5.155.tgz#809dd0ae9ae1db87c358e0c0c17c09a2ffc432d1"
-  integrity sha512-ps5KcGGmwL8VaeJlvlDlu4fORQpv3+GIcF5I3f9tUKUlJ/wsysh6HU8P5L1XWRYeXfA0oJd4PyM8ds8zTFf6Ng==
+  version "1.5.157"
+  resolved "https://registry.npmmirror.com/electron-to-chromium/-/electron-to-chromium-1.5.157.tgz#553b122522ac7bba6f1a0dd7d50b14f297736f75"
+  integrity sha512-/0ybgsQd1muo8QlnuTpKwtl0oX5YMlUGbm8xyqgDU00motRkKFFbUJySAQBWcY79rVqNLWIWa87BGVGClwAB2w==
 
 elkjs@^0.9.3:
   version "0.9.3"
@@ -6731,11 +6738,11 @@ eslint-config-flat-gitignore@^2.1.0:
     "@eslint/compat" "^1.2.5"
 
 eslint-config-next@^15.0.0:
-  version "15.3.2"
-  resolved "https://registry.npmmirror.com/eslint-config-next/-/eslint-config-next-15.3.2.tgz#ed2bc6607f54555bbeaf23a032b4e430e453b63c"
-  integrity sha512-FerU4DYccO4FgeYFFglz0SnaKRe1ejXQrDb8kWUkTAg036YWi+jUsgg4sIGNCDhAsDITsZaL4MzBWKB6f4G1Dg==
+  version "15.1.8"
+  resolved "https://registry.npmmirror.com/eslint-config-next/-/eslint-config-next-15.1.8.tgz#db5589422573fab35db2131347113b98cbeb7618"
+  integrity sha512-xB9IwQLS5qlx5bWJKmYtyakq990uGrvCE6birTVsPpb8xusZHtA0eRJtnfjZQu9UFlAPAo4yoh7r6Qa1h+isBg==
   dependencies:
-    "@next/eslint-plugin-next" "15.3.2"
+    "@next/eslint-plugin-next" "15.1.8"
     "@rushstack/eslint-patch" "^1.10.3"
     "@typescript-eslint/eslint-plugin" "^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0"
     "@typescript-eslint/parser" "^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0"
@@ -14080,9 +14087,9 @@ yocto-queue@^1.0.0:
   integrity sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==
 
 zod@^3.23.8:
-  version "3.25.20"
-  resolved "https://registry.npmmirror.com/zod/-/zod-3.25.20.tgz#c36739c52f6d01cf04c53bf56d99f2f5488739ee"
-  integrity sha512-z03fqpTMDF1G02VLKUMt6vyACE7rNWkh3gpXVHgPTw28NPtDFRGvcpTtPwn2kMKtQ0idtYJUTxchytmnqYswcw==
+  version "3.25.23"
+  resolved "https://registry.npmmirror.com/zod/-/zod-3.25.23.tgz#128fb02f3619a8bca6bbbf6b07b457236cf33391"
+  integrity sha512-Od2bdMosahjSrSgJtakrwjMDb1zM1A3VIHCPGveZt/3/wlrTWBya2lmEh2OYe4OIu8mPTmmr0gnLHIWQXdtWBg==
 
 zrender@5.6.1:
   version "5.6.1"
