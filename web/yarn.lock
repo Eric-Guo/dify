@@ -6742,9 +6742,9 @@ eslint-flat-config-utils@^2.1.0:
     pathe "^2.0.3"
 
 eslint-import-context@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.npmmirror.com/eslint-import-context/-/eslint-import-context-0.1.4.tgz#38b2bdc6d57fcf357a8c61cf02f8b46652b02dde"
-  integrity sha512-x3+etvB5TPxjFIq2m4tTnpt/9Ekp5GZKzXNp5ExLaS7Qv9E5BVs/Td7jxSnRtSzrgTCExXZlc0MuOdSuDLURiQ==
+  version "0.1.5"
+  resolved "https://registry.npmmirror.com/eslint-import-context/-/eslint-import-context-0.1.5.tgz#ef1facb0f940e6aa85c9066983469e9b7a994dc8"
+  integrity sha512-jalO1mLiEvTv0io0koz1AE4LwkHQxDBFLaSXWweWtJR0y/NC1yyxvU61Z54bghIFNeM1M4TvwRwVRhLunQJ3gw==
   dependencies:
     get-tsconfig "^4.10.1"
     stable-hash "^0.0.5"
