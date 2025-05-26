@@ -3210,10 +3210,10 @@
   dependencies:
     "@tanstack/store" "^0.7.0"
 
-"@tanstack/query-core@5.77.1":
-  version "5.77.1"
-  resolved "https://registry.npmmirror.com/@tanstack/query-core/-/query-core-5.77.1.tgz#180ae89457f80e1b24f48a2f28e8eb1d348e213f"
-  integrity sha512-nfxVhy4UynChMFfN4NxwI8pktV9R3Zt/ROxOAe6pdOf8CigDLn26p+ex1YW5uien26BBICLmN0dTvIELHCs5vw==
+"@tanstack/query-core@5.77.2":
+  version "5.77.2"
+  resolved "https://registry.npmmirror.com/@tanstack/query-core/-/query-core-5.77.2.tgz#a59f34068b96c5888075f04e6bc74b8076a3f97b"
+  integrity sha512-1lqJwPsR6GX6nZFw06erRt518O19tWU6Q+x0fJUygl4lxHCYF2nhzBPwLKk2NPjYOrpR0K567hxPc5K++xDe9Q==
 
 "@tanstack/query-devtools@5.76.0":
   version "5.76.0"
@@ -3231,18 +3231,18 @@
     devalue "^5.1.1"
 
 "@tanstack/react-query-devtools@^5.60.5":
-  version "5.77.1"
-  resolved "https://registry.npmmirror.com/@tanstack/react-query-devtools/-/react-query-devtools-5.77.1.tgz#7abc0b9d1be04e6c73e36f74331daff2a2c241f0"
-  integrity sha512-b4sOJYTjvCCfL1kQsJevDopqp8b+SpfjCVYr5CqGwAmYsKPIDk5US5wjoacaUHGF+GULjPFH4yT29Ce19kU3iQ==
+  version "5.77.2"
+  resolved "https://registry.npmmirror.com/@tanstack/react-query-devtools/-/react-query-devtools-5.77.2.tgz#0fb8b60a4d0c4c7b194d17c85f109583f2710d46"
+  integrity sha512-TxB9boB0dmTJByAfh36kbhvohNHZiPJe+m+PCnbnfL+gdDHJbp174S6BwbU2dHx980njeAKFmWz8tgHNKG3itw==
   dependencies:
     "@tanstack/query-devtools" "5.76.0"
 
 "@tanstack/react-query@^5.60.5":
-  version "5.77.1"
-  resolved "https://registry.npmmirror.com/@tanstack/react-query/-/react-query-5.77.1.tgz#89fb66e0fb3f6a1359cf171ca4e883e111d2a58f"
-  integrity sha512-qBwpxFg0+MZF0fICQwgvzwrVbcs7TdQlLyEd1f1dN83oeIALofCIAJHV7sPWu+BCS5tcXkG5CvOuf7yla8GYqQ==
+  version "5.77.2"
+  resolved "https://registry.npmmirror.com/@tanstack/react-query/-/react-query-5.77.2.tgz#cf3bc22b27630fdaf786527015fe2480512df55f"
+  integrity sha512-BRHxWdy1mHmgAcYA/qy2IPLylT81oebLgkm9K85viN2Qol/Vq48t1dzDFeDIVQjTWDV96AmqsLNPlH5HjyKCxA==
   dependencies:
-    "@tanstack/query-core" "5.77.1"
+    "@tanstack/query-core" "5.77.2"
 
 "@tanstack/react-store@^0.7.0":
   version "0.7.0"
@@ -3983,10 +3983,15 @@
     debug "^4.3.4"
     ts-api-utils "^2.1.0"
 
-"@typescript-eslint/types@8.32.1", "@typescript-eslint/types@^8.11.0", "@typescript-eslint/types@^8.32.1":
+"@typescript-eslint/types@8.32.1":
   version "8.32.1"
   resolved "https://registry.npmmirror.com/@typescript-eslint/types/-/types-8.32.1.tgz#b19fe4ac0dc08317bae0ce9ec1168123576c1d4b"
   integrity sha512-YmybwXUJcgGqgAp6bEsgpPXEg6dcCyPyCSr0CAAueacR/CCBi25G3V8gGQ2kRzQRBNol7VQknxMs9HvVa9Rvfg==
+
+"@typescript-eslint/types@^8.11.0", "@typescript-eslint/types@^8.32.1":
+  version "8.33.0"
+  resolved "https://registry.npmmirror.com/@typescript-eslint/types/-/types-8.33.0.tgz#02a7dbba611a8abf1ad2a9e00f72f7b94b5ab0ee"
+  integrity sha512-DKuXOKpM5IDT1FA2g9x9x1Ug81YuKrzf4mYX8FAVSNu5Wo/LELHWQyM1pQaDkI42bX15PWl0vNPt1uGiIFUOpg==
 
 "@typescript-eslint/typescript-estree@8.32.1", "@typescript-eslint/typescript-estree@^8.32.1":
   version "8.32.1"
@@ -4169,29 +4174,29 @@
     loupe "^3.1.2"
     tinyrainbow "^1.2.0"
 
-"@vue/compiler-core@3.5.14":
-  version "3.5.14"
-  resolved "https://registry.npmmirror.com/@vue/compiler-core/-/compiler-core-3.5.14.tgz#3676685c04c48a5b4a5515b3b2842e98342c555c"
-  integrity sha512-k7qMHMbKvoCXIxPhquKQVw3Twid3Kg4s7+oYURxLGRd56LiuHJVrvFKI4fm2AM3c8apqODPfVJGoh8nePbXMRA==
+"@vue/compiler-core@3.5.15":
+  version "3.5.15"
+  resolved "https://registry.npmmirror.com/@vue/compiler-core/-/compiler-core-3.5.15.tgz#7cbda69429490f4ec0f68126dd0d6eae050dd01c"
+  integrity sha512-nGRc6YJg/kxNqbv/7Tg4juirPnjHvuVdhcmDvQWVZXlLHjouq7VsKmV1hIxM/8yKM0VUfwT/Uzc0lO510ltZqw==
   dependencies:
     "@babel/parser" "^7.27.2"
-    "@vue/shared" "3.5.14"
+    "@vue/shared" "3.5.15"
     entities "^4.5.0"
     estree-walker "^2.0.2"
     source-map-js "^1.2.1"
 
 "@vue/compiler-dom@^3.2.47":
-  version "3.5.14"
-  resolved "https://registry.npmmirror.com/@vue/compiler-dom/-/compiler-dom-3.5.14.tgz#bbf27421f80f7b8873000edceecd817c4abf438a"
-  integrity sha512-1aOCSqxGOea5I80U2hQJvXYpPm/aXo95xL/m/mMhgyPUsKe9jhjwWpziNAw7tYRnbz1I61rd9Mld4W9KmmRoug==
+  version "3.5.15"
+  resolved "https://registry.npmmirror.com/@vue/compiler-dom/-/compiler-dom-3.5.15.tgz#2de7fec1a685c236585a4a1fb12cc586d7f0ffef"
+  integrity sha512-ZelQd9n+O/UCBdL00rlwCrsArSak+YLZpBVuNDio1hN3+wrCshYZEDUO3khSLAzPbF1oQS2duEoMDUHScUlYjA==
   dependencies:
-    "@vue/compiler-core" "3.5.14"
-    "@vue/shared" "3.5.14"
+    "@vue/compiler-core" "3.5.15"
+    "@vue/shared" "3.5.15"
 
-"@vue/shared@3.5.14":
-  version "3.5.14"
-  resolved "https://registry.npmmirror.com/@vue/shared/-/shared-3.5.14.tgz#8fcdc6c69661a1163c173cafb6129c3f8ad01122"
-  integrity sha512-oXTwNxVfc9EtP1zzXAlSlgARLXNC84frFYkS0HHz0h3E4WZSP9sywqjqzGCP9Y34M8ipNmd380pVgmMuwELDyQ==
+"@vue/shared@3.5.15":
+  version "3.5.15"
+  resolved "https://registry.npmmirror.com/@vue/shared/-/shared-3.5.15.tgz#4c633a0e66f38119e38eecf340b4a65b0bad7192"
+  integrity sha512-bKvgFJJL1ZX9KxMCTQY6xD9Dhe3nusd1OhyOb1cJYGqvAr0Vg8FIjHPMOEVbJ9GDT9HG+Bjdn4oS8ohKP8EvoA==
 
 "@webassemblyjs/ast@1.14.1", "@webassemblyjs/ast@^1.14.1":
   version "1.14.1"
@@ -6741,7 +6746,7 @@ eslint-flat-config-utils@^2.1.0:
   dependencies:
     pathe "^2.0.3"
 
-eslint-import-context@^0.1.4:
+eslint-import-context@^0.1.5:
   version "0.1.5"
   resolved "https://registry.npmmirror.com/eslint-import-context/-/eslint-import-context-0.1.5.tgz#ef1facb0f940e6aa85c9066983469e9b7a994dc8"
   integrity sha512-jalO1mLiEvTv0io0koz1AE4LwkHQxDBFLaSXWweWtJR0y/NC1yyxvU61Z54bghIFNeM1M4TvwRwVRhLunQJ3gw==
@@ -6812,14 +6817,14 @@ eslint-plugin-es-x@^7.8.0:
     eslint-compat-utils "^0.5.1"
 
 eslint-plugin-import-x@^4.12.2:
-  version "4.13.1"
-  resolved "https://registry.npmmirror.com/eslint-plugin-import-x/-/eslint-plugin-import-x-4.13.1.tgz#64ff0e74ca51dadff490beeabee43fc768659aab"
-  integrity sha512-Ua4HZBmG5TNr18q3Is+nT6mKCzNNpycqtv/+TkIK7E3w4LBlPlZI6vLwmDjXdIZtJPP2Z1Oh5+wksWwlcCjMpA==
+  version "4.13.3"
+  resolved "https://registry.npmmirror.com/eslint-plugin-import-x/-/eslint-plugin-import-x-4.13.3.tgz#bcf172817eaa02b782cd0bcdb384091c40dbb747"
+  integrity sha512-CDewJDEeYQhm94KGCDYiuwU1SdaWc/vh+SziSKkF7kichAqAFnQYtSYUvSwSBbiBjYLxV5uUxocxxQobRI9YXA==
   dependencies:
     "@typescript-eslint/utils" "^8.32.1"
     comment-parser "^1.4.1"
     debug "^4.4.1"
-    eslint-import-context "^0.1.4"
+    eslint-import-context "^0.1.5"
     eslint-import-resolver-node "^0.3.9"
     is-glob "^4.0.3"
     minimatch "^9.0.3 || ^10.0.1"
