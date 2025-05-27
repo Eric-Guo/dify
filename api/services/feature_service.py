@@ -185,8 +185,8 @@ class FeatureService:
         cls._fulfill_system_params_from_env(system_features)
 
         if dify_config.ENTERPRISE_ENABLED:
-            system_features.branding.enabled = True
-            system_features.webapp_auth.enabled = True
+            system_features.branding.enabled = False
+            system_features.webapp_auth.enabled = False
             system_features.enable_change_email = False
             cls._fulfill_params_from_enterprise(system_features)
 
