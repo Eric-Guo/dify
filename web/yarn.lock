@@ -13056,9 +13056,9 @@ swr@^2.3.0:
     use-sync-external-store "^1.4.0"
 
 "synckit@^0.6.2 || ^0.7.3 || ^0.11.5":
-  version "0.11.6"
-  resolved "https://registry.npmmirror.com/synckit/-/synckit-0.11.6.tgz#e742a0c27bbc1fbc96f2010770521015cca7ed5c"
-  integrity sha512-2pR2ubZSV64f/vqm9eLPz/KOvR9Dm+Co/5ChLgeHl0yEDRc6h5hXHoxEQH8Y5Ljycozd3p1k5TTSVdzYGkPvLw==
+  version "0.11.7"
+  resolved "https://registry.npmmirror.com/synckit/-/synckit-0.11.7.tgz#0a1551ecc1eff43a9dfb375ab7fc4182295f37cc"
+  integrity sha512-/5aUeiRPqmY0CRTJ+iVWfOOMHWTDh8JAIuNF1A6nZ2/RdCNWwKaUrO5Qw5ephLK6dYa7NclYBI0ahdgUECvdhA==
   dependencies:
     "@pkgr/core" "^0.2.4"
 
@@ -14108,9 +14108,9 @@ yocto-queue@^1.0.0:
   integrity sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==
 
 zod@^3.23.8, zod@^3.25.28:
-  version "3.25.39"
-  resolved "https://registry.npmmirror.com/zod/-/zod-3.25.39.tgz#110fa5c3048fc8ba896625a49448c8553f69c8f6"
-  integrity sha512-yrva2T2x4R+FMFTPBVD/YPS7ct8njqjnV93zNx/MlwqLAxcnxwRGbXWyWF63/nErl3rdRd8KARObon7BiWzabQ==
+  version "3.25.41"
+  resolved "https://registry.npmmirror.com/zod/-/zod-3.25.41.tgz#53dbe51e5f69fb521dd7ccbfbf3c829ddad22962"
+  integrity sha512-8+sDJTGtCYIDBhdqDygp0ffj8kzziRKqAJPhpYObbElJ+3TRe/mnlnwH+/OMa3kKhueS4Drm5UMW00/u1p07zA==
 
 zrender@5.6.1:
   version "5.6.1"
