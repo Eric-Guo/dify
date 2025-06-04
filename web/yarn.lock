@@ -3997,7 +3997,7 @@
     debug "^4.3.4"
     ts-api-utils "^2.1.0"
 
-"@typescript-eslint/types@8.33.1", "@typescript-eslint/types@^8.11.0", "@typescript-eslint/types@^8.32.1", "@typescript-eslint/types@^8.33.0", "@typescript-eslint/types@^8.33.1":
+"@typescript-eslint/types@8.33.1", "@typescript-eslint/types@^8.11.0", "@typescript-eslint/types@^8.33.0", "@typescript-eslint/types@^8.33.1":
   version "8.33.1"
   resolved "https://registry.npmmirror.com/@typescript-eslint/types/-/types-8.33.1.tgz#b693111bc2180f8098b68e9958cf63761657a55f"
   integrity sha512-xid1WfizGhy/TKMTwhtVOgalHwPtV8T32MS9MaH50Cwvz6x6YqRIPdD2WvW0XaqOzTV9p5xdLY0h/ZusU5Lokg==
@@ -6945,12 +6945,12 @@ eslint-plugin-no-only-tests@^3.3.0:
   integrity sha512-brcKcxGnISN2CcVhXJ/kEQlNa0MEfGRtwKtWA16SkqXHKitaKIMrfemJKLKX1YqDU5C/5JY3PvZXd5jEW04e0Q==
 
 eslint-plugin-perfectionist@^4.13.0:
-  version "4.13.0"
-  resolved "https://registry.npmmirror.com/eslint-plugin-perfectionist/-/eslint-plugin-perfectionist-4.13.0.tgz#7f38de8ac0fedeecf8e615437670ab970824e401"
-  integrity sha512-dsPwXwV7IrG26PJ+h1crQ1f5kxay/gQAU0NJnbVTQc91l5Mz9kPjyIZ7fXgie+QSgi8a+0TwGbfaJx+GIhzuoQ==
+  version "4.14.0"
+  resolved "https://registry.npmmirror.com/eslint-plugin-perfectionist/-/eslint-plugin-perfectionist-4.14.0.tgz#3bbb6282e8bf7944809bf2ce46d4cc47a252e312"
+  integrity sha512-BkhiOqzdum8vQSFgj1/q5+6UUWPMn4GELdxuX7uIsGegmAeH/+LnWsiVxgMrxalD0p68sYfMeKaHF1NfrpI/mg==
   dependencies:
-    "@typescript-eslint/types" "^8.32.1"
-    "@typescript-eslint/utils" "^8.32.1"
+    "@typescript-eslint/types" "^8.33.1"
+    "@typescript-eslint/utils" "^8.33.1"
     natural-orderby "^5.0.0"
 
 eslint-plugin-pnpm@^0.3.1:
@@ -14110,9 +14110,9 @@ yocto-queue@^1.0.0:
   integrity sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==
 
 zod@^3.23.8, zod@^3.25.49:
-  version "3.25.49"
-  resolved "https://registry.npmmirror.com/zod/-/zod-3.25.49.tgz#e044541aac57bd12d1cec5dbf9309cdc768774c2"
-  integrity sha512-JMMPMy9ZBk3XFEdbM3iL1brx4NUSejd6xr3ELrrGEfGb355gjhiAWtG3K5o+AViV/3ZfkIrCzXsZn6SbLwTR8Q==
+  version "3.25.50"
+  resolved "https://registry.npmmirror.com/zod/-/zod-3.25.50.tgz#9de9ca02ae702fd37ed87b28f8f17099f2402aa9"
+  integrity sha512-VstOnRxf4tlSq0raIwbn0n+LA34SxVoZ8r3pkwSUM0jqNiA/HCMQEVjTuS5FZmHsge+9MDGTiAuHyml5T0um6A==
 
 zrender@5.6.1:
   version "5.6.1"
