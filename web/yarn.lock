@@ -14115,9 +14115,9 @@ yocto-queue@^1.0.0:
   integrity sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==
 
 zod@^3.23.8, zod@^3.25.49:
-  version "3.25.51"
-  resolved "https://registry.npmmirror.com/zod/-/zod-3.25.51.tgz#aa2cf648e54f6f060f139cf77b694819f63c9f3a"
-  integrity sha512-TQSnBldh+XSGL+opiSIq0575wvDPqu09AqWe1F7JhUMKY+M91/aGlK4MhpVNO7MgYfHcVCB1ffwAUTJzllKJqg==
+  version "3.25.52"
+  resolved "https://registry.npmmirror.com/zod/-/zod-3.25.52.tgz#e3c2cdfd3a6d93a8502622aac39fbe5bedbddfcc"
+  integrity sha512-uAbT2zN2aCdHH4OmFrV/GhZy1rsnIgIOaQ+YDLUAzMe4560rscckxxg4Myk+KHarIAUhya2clp4EnCqXWF0eew==
 
 zrender@5.6.1:
   version "5.6.1"
