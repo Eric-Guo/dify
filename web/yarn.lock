@@ -2288,9 +2288,9 @@
     "@monaco-editor/loader" "^1.5.0"
 
 "@napi-rs/wasm-runtime@^0.2.10":
-  version "0.2.10"
-  resolved "https://registry.npmmirror.com/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.10.tgz#f3b7109419c6670000b2401e0c778b98afc25f84"
-  integrity sha512-bCsCyeZEwVErsGmyPNSzwfwFn4OdxBj0mmv6hOFucB/k81Ojdu68RbZdxYsRQUPc9l6SU5F/cG+bXgWs3oUgsQ==
+  version "0.2.11"
+  resolved "https://registry.npmmirror.com/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.11.tgz#192c1610e1625048089ab4e35bc0649ce478500e"
+  integrity sha512-9DPkXtvHydrcOsopiYpUgPHpmj0HWZKMUnL2dZqpvC42lsratuBG06V5ipyno0fUek5VlFsNQ+AcFATSrJXgMA==
   dependencies:
     "@emnapi/core" "^1.4.3"
     "@emnapi/runtime" "^1.4.3"
@@ -4362,9 +4362,9 @@ acorn-walk@^8.1.1:
     acorn "^8.11.0"
 
 acorn@^8.0.0, acorn@^8.11.0, acorn@^8.14.0, acorn@^8.4.1, acorn@^8.5.0, acorn@^8.9.0:
-  version "8.14.1"
-  resolved "https://registry.npmmirror.com/acorn/-/acorn-8.14.1.tgz#721d5dc10f7d5b5609a891773d47731796935dfb"
-  integrity sha512-OvQ/2pUDKmgfCg++xsTX1wGxfTaszcHVcTctW4UJB4hibJx2HXxxO5UmVgyjMa+ZDsiaf5wWLXYpRWMmBI0QHg==
+  version "8.15.0"
+  resolved "https://registry.npmmirror.com/acorn/-/acorn-8.15.0.tgz#a360898bc415edaac46c8241f6383975b930b816"
+  integrity sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==
 
 adjust-sourcemap-loader@^4.0.0:
   version "4.0.0"
@@ -6462,9 +6462,9 @@ entities@^4.5.0:
   integrity sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==
 
 entities@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.npmmirror.com/entities/-/entities-6.0.0.tgz#09c9e29cb79b0a6459a9b9db9efb418ac5bb8e51"
-  integrity sha512-aKstq2TDOndCn4diEyp9Uq/Flu2i1GlLkc6XIDQSDMuaFE3OPW5OphLCyQ5SpSJZTb4reN+kTcYru5yIfXoRPw==
+  version "6.0.1"
+  resolved "https://registry.npmmirror.com/entities/-/entities-6.0.1.tgz#c28c34a43379ca7f61d074130b2f5f7020a30694"
+  integrity sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==
 
 env-paths@^2.2.1:
   version "2.2.1"
@@ -7078,9 +7078,9 @@ eslint-plugin-react@^7.37.0:
     string.prototype.repeat "^1.0.0"
 
 eslint-plugin-regexp@^2.8.0:
-  version "2.8.0"
-  resolved "https://registry.npmmirror.com/eslint-plugin-regexp/-/eslint-plugin-regexp-2.8.0.tgz#e0c830c86e5f16c6e3dedb42c064e8837a490d4d"
-  integrity sha512-xme90IvkMgdyS+NJC21FM0H6ek4urGsdlIFTXpZRqH2BKJKVSd8hRbyrCpbcqfGBi2jth3eQoLiO3RC1gxZHiw==
+  version "2.9.0"
+  resolved "https://registry.npmmirror.com/eslint-plugin-regexp/-/eslint-plugin-regexp-2.9.0.tgz#0783be374e68c7a7af98543334fd4f8572949e3f"
+  integrity sha512-9WqJMnOq8VlE/cK+YAo9C9YHhkOtcEtEk9d12a+H7OSZFwlpI6stiHmYPGa2VE0QhTzodJyhlyprUaXDZLgHBw==
   dependencies:
     "@eslint-community/eslint-utils" "^4.2.0"
     "@eslint-community/regexpp" "^4.11.0"
