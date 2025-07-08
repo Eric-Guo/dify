@@ -296,7 +296,8 @@ def paser_docx_part(block, doc: Document, content_items, i):
 def _extract_text_from_docx(file_content: bytes) -> str:
     """
     Extract text from a DOCX file.
-    For now support only paragraph and table add more if needed
+    Supports paragraphs, tables, and document comments (at end without referenced/anchor).
+    See https://github.com/python-openxml/python-docx/pull/1495
     """
     try:
         doc_file = io.BytesIO(file_content)
@@ -346,6 +347,16 @@ def _extract_text_from_docx(file_content: bytes) -> str:
                 except Exception as e:
                     logger.warning(f"Failed to extract table from DOC: {e}")
                     continue
+
+        # Extract document comments (requires python-docx with comment support)
+        try:
+            if hasattr(doc, "comments"):
+                for comment in doc.comments:  # type: ignore[attr-defined]
+                    comment_text = getattr(comment, "text", "").strip()
+                    if comment_text:
+                        text.append(comment_text)
+        except Exception as e:  # pragma: no cover
+            logger.warning(f"Failed to extract comments from DOCX: {e}")
 
         return "\n".join(text)
 
