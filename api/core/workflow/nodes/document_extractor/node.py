@@ -89,7 +89,13 @@ class DocumentExtractorNode(BaseNode):
 
         try:
             if isinstance(value, list):
-                extracted_text_list = list(map(_extract_text_from_file, value))
+                extracted_text_list = [
+                    _extract_text_from_file(
+                        f,
+                        extract_comments=self.node_data.is_extract_comments,
+                    )
+                    for f in value
+                ]
                 return NodeRunResult(
                     status=WorkflowNodeExecutionStatus.SUCCEEDED,
                     inputs=inputs,
@@ -97,7 +103,10 @@ class DocumentExtractorNode(BaseNode):
                     outputs={"text": ArrayStringSegment(value=extracted_text_list)},
                 )
             elif isinstance(value, File):
-                extracted_text = _extract_text_from_file(value)
+                extracted_text = _extract_text_from_file(
+                    value,
+                    extract_comments=self.node_data.is_extract_comments,
+                )
                 return NodeRunResult(
                     status=WorkflowNodeExecutionStatus.SUCCEEDED,
                     inputs=inputs,
@@ -312,7 +321,7 @@ def paser_docx_part(block, doc: Document, content_items, i):
         content_items.append((i, "table", Table(block, doc)))
 
 
-def _extract_text_from_docx(file_content: bytes) -> str:
+def _extract_text_from_docx(file_content: bytes, *, extract_comments: bool = False) -> str:
     """
     Extract text from a DOCX file.
     Supports paragraphs, tables, and document comments (at end without referenced/anchor).
@@ -368,14 +377,15 @@ def _extract_text_from_docx(file_content: bytes) -> str:
                     continue
 
         # Extract document comments (requires python-docx with comment support)
-        try:
-            if hasattr(doc, "comments"):
-                for comment in doc.comments:  # type: ignore[attr-defined]
-                    comment_text = getattr(comment, "text", "").strip()
-                    if comment_text:
-                        text.append(comment_text)
-        except Exception as e:  # pragma: no cover
-            logger.warning(f"Failed to extract comments from DOCX: {e}")
+        if extract_comments:
+            try:
+                if hasattr(doc, "comments"):
+                    for comment in doc.comments:  # type: ignore[attr-defined]
+                        comment_text = getattr(comment, "text", "").strip()
+                        if comment_text:
+                            text.append(comment_text)
+            except Exception as e:  # pragma: no cover
+                logger.warning(f"Failed to extract comments from DOCX: {e}")
 
         return "\n".join(text)
 
@@ -398,15 +408,27 @@ def _download_file_content(file: File) -> bytes:
         raise FileDownloadError(f"Error downloading file: {str(e)}") from e
 
 
-def _extract_text_from_file(file: File):
+def _extract_text_from_file(file: File, *, extract_comments: bool = False):
+    """Download file content and extract text. Optionally control whether to include comments (DOCX only)."""
     file_content = _download_file_content(file)
+
+    # Prefer extension-based dispatch so we can control DOCX extraction behaviour.
+    extension = (file.extension or "").lower()
+
+    # Handle DOCX separately to pass the extract_comments flag
+    if extension == ".docx":
+        return _extract_text_from_docx(file_content, extract_comments=extract_comments)
+
+    # Fallback: handle by MIME type or generic extension logic
+    if file.mime_type and file.mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        return _extract_text_from_docx(file_content, extract_comments=extract_comments)
+
     if file.extension:
-        extracted_text = _extract_text_by_file_extension(file_content=file_content, file_extension=file.extension)
+        return _extract_text_by_file_extension(file_content=file_content, file_extension=file.extension)
     elif file.mime_type:
-        extracted_text = _extract_text_by_mime_type(file_content=file_content, mime_type=file.mime_type)
+        return _extract_text_by_mime_type(file_content=file_content, mime_type=file.mime_type)
     else:
         raise UnsupportedFileTypeError("Unable to determine file type: MIME type or file extension is missing")
-    return extracted_text
 
 
 def _extract_text_from_csv(file_content: bytes) -> str:

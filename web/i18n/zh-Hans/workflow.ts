@@ -812,6 +812,10 @@ const translation = {
         text: '提取的文本',
       },
       supportFileTypes: '支持的文件类型：{{types}}。',
+      extractComments: {
+        title: '从 docx 中提取评论',
+        tooltip: '所有的评论将附加在提取文本的最后。',
+      },
       learnMore: '了解更多',
     },
     listFilter: {

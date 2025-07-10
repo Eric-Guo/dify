@@ -811,6 +811,10 @@ const translation = {
         text: 'Extracted text',
       },
       supportFileTypes: 'Support file types: {{types}}.',
+      extractComments: {
+        title: 'Extract the comment in docx',
+        tooltip: 'The comment will append at the end of documents',
+      },
       learnMore: 'Learn more',
     },
     listFilter: {
