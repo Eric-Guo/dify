@@ -342,6 +342,8 @@
   "nodes.dataSource.add": "添加数据源",
   "nodes.dataSource.supportedFileFormats": "支持的文件格式",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "文件格式，例如：doc",
+  "nodes.docExtractor.extractComments.title": "从 docx 中提取评论",
+  "nodes.docExtractor.extractComments.tooltip": "所有的评论将附加在提取文本的最后。",
   "nodes.docExtractor.inputVar": "输入变量",
   "nodes.docExtractor.learnMore": "了解更多",
   "nodes.docExtractor.outputVars.text": "提取的文本",

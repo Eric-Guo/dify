@@ -6,6 +6,7 @@ import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocale } from '#i18n'
 import Field from '@/app/components/workflow/nodes/_base/components/field'
+import Switch from '@/app/components/base/switch'
 import { BlockEnum } from '@/app/components/workflow/types'
 import { LanguagesSupported } from '@/i18n/language'
 import { consoleQuery } from '@/service/console'
@@ -40,7 +41,13 @@ const Panel: FC<NodePanelProps<DocExtractorNodeType>> = ({ id, data }) => {
       .filter((item, index, self) => self.indexOf(item) === index) // remove duplicates
       .join(locale !== LanguagesSupported[1] ? ', ' : '、 ')
   })()
-  const { readOnly, inputs, handleVarChanges, filterVar } = useConfig(id, data)
+  const {
+    readOnly,
+    inputs,
+    handleVarChanges,
+    handleExtractCommentsChange,
+    filterVar,
+  } = useConfig(id, data)
 
   return (
     <div className="mt-2">
@@ -66,6 +73,19 @@ const Panel: FC<NodePanelProps<DocExtractorNodeType>> = ({ id, data }) => {
               </a>
             </div>
           </>
+        </Field>
+        <Field
+          title={t(`${i18nPrefix}.extractComments.title`)}
+          tooltip={t(`${i18nPrefix}.extractComments.tooltip`)}
+          operations={
+            <Switch
+              defaultValue={!!inputs.is_extract_comments}
+              onChange={handleExtractCommentsChange}
+              size='md'
+              disabled={readOnly}
+            />
+          }
+        >
         </Field>
       </div>
       <Split />
