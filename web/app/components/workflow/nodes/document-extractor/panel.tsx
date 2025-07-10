@@ -11,6 +11,7 @@ import useConfig from './use-config'
 import type { DocExtractorNodeType } from './types'
 import { fetchSupportFileTypes } from '@/service/datasets'
 import Field from '@/app/components/workflow/nodes/_base/components/field'
+import Switch from '@/app/components/base/switch'
 import { BlockEnum, type NodePanelProps } from '@/app/components/workflow/types'
 import I18n from '@/context/i18n'
 import { LanguagesSupported } from '@/i18n/language'
@@ -45,6 +46,7 @@ const Panel: FC<NodePanelProps<DocExtractorNodeType>> = ({
     readOnly,
     inputs,
     handleVarChanges,
+    handleExtractCommentsChange,
     filterVar,
   } = useConfig(id, data)
 
@@ -70,6 +72,19 @@ const Panel: FC<NodePanelProps<DocExtractorNodeType>> = ({
               <a className='text-text-accent' href={link} target='_blank'>{t(`${i18nPrefix}.learnMore`)}</a>
             </div>
           </>
+        </Field>
+        <Field
+          title={t(`${i18nPrefix}.extractComments.title`)}
+          tooltip={t(`${i18nPrefix}.extractComments.tooltip`)}
+          operations={
+            <Switch
+              defaultValue={!!inputs.is_extract_comments}
+              onChange={handleExtractCommentsChange}
+              size='md'
+              disabled={readOnly}
+            />
+          }
+        >
         </Field>
       </div>
       <Split />
