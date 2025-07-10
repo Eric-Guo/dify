@@ -498,6 +498,8 @@
   "nodes.docExtractor.learnMore": "了解更多",
   "nodes.docExtractor.outputVars.text": "提取的文本",
   "nodes.docExtractor.supportFileTypes": "支持的文件类型：{{types}}。",
+  "nodes.docExtractor.extractComments.title": "从 docx 中提取评论",
+  "nodes.docExtractor.extractComments.tooltip": "所有的评论将附加在提取文本的最后。",
   "nodes.end.output.variable": "输出变量",
   "nodes.http.api": "API",
   "nodes.http.apiPlaceholder": "输入 URL，输入变量时请键入‘/’",
