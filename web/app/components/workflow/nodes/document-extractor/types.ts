@@ -3,4 +3,5 @@ import type { CommonNodeType, ValueSelector } from '@/app/components/workflow/ty
 export type DocExtractorNodeType = CommonNodeType & {
   variable_selector: ValueSelector
   is_array_file: boolean
+  is_extract_comments: boolean
 }
