@@ -13246,6 +13246,18 @@ tinyspy@^3.0.0:
   resolved "https://registry.npmmirror.com/tinyspy/-/tinyspy-3.0.2.tgz#86dd3cf3d737b15adcf17d7887c84a75201df20a"
   integrity sha512-n1cw8k1k0x4pgA2+9XrOkFydTerNcJ1zWCO5Nn9scWHTD+5tp8dghT2x1uduQePZTZgd3Tupf+x9BxJjeJi77Q==
 
+tldts-core@^7.0.10:
+  version "7.0.10"
+  resolved "https://registry.npmmirror.com/tldts-core/-/tldts-core-7.0.10.tgz#6f36d01590df67fb9bba3f0ba56616db08c26fe6"
+  integrity sha512-z7PilFbUHwd+IlQ72D0aHDpqykUUpe9yvwa5k/rFvFLmpvNmWqHEIHoSYwE5sA5LZU4bTTIjhDZEjURHc8f2ag==
+
+tldts@^7.0.9:
+  version "7.0.10"
+  resolved "https://registry.npmmirror.com/tldts/-/tldts-7.0.10.tgz#89d719ad8d9b6ba1192846453456c05f41c54f15"
+  integrity sha512-n6xyIpjWEn6Ikpkir7zVdxNoRO3ZrL+x65ztg/JYoIMoPkpRQ87W4RxbNiso+axhF2zTAzwR+NJJE3NJazLb6Q==
+  dependencies:
+    tldts-core "^7.0.10"
+
 tmpl@1.0.5:
   version "1.0.5"
   resolved "https://registry.npmmirror.com/tmpl/-/tmpl-1.0.5.tgz#8683e0b902bb9c20c4f726e3c0b69f36518c07cc"
