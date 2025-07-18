@@ -36,7 +36,6 @@
     "test:watch": "jest --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "preinstall": "npx only-allow pnpm",
     "analyze": "ANALYZE=true pnpm build"
   },
   "dependencies": {
