@@ -1,0 +1,17 @@
+---
+globs: web/**/*.{ts,tsx,js}
+description: Frontend structure (Next.js, React) and navigation
+---
+### Web Frontend Guide (Next.js App Router)
+
+- **Root layout**: [web/app/layout.tsx](mdc:web/app/layout.tsx). Shared route groups under [web/app/(commonLayout)/](mdc:web/app/(commonLayout)/) and [web/app/(shareLayout)/](mdc:web/app/(shareLayout)/).
+- **Pages**: Route files are `page.tsx` under their directory; nested segments like `[token]/page.tsx` represent dynamic routes.
+- **Components**: Co-located under [web/app/components/](mdc:web/app/components/) and feature folders (e.g., [web/app/components/app/configuration/](mdc:web/app/components/app/configuration/)).
+- **i18n**: Config under [web/i18n-config/](mdc:web/i18n-config/); translations in [web/i18n/](mdc:web/i18n/).
+- **Config**: Runtime config in [web/config/](mdc:web/config/); global styles at [web/app/styles/](mdc:web/styles/).
+- **Testing**: Jest/RTL tests in [web/__tests__/](mdc:web/__tests__/) with mocks in [web/__mocks__/](mdc:web/__mocks__/).
+
+Conventions
+- Keep server components free of client-only APIs; add `"use client"` for client components.
+- Use feature folders for cohesion; avoid deeply nested cross-feature imports.
+- Prefer hooks under [web/hooks/](mdc:web/hooks/) and contexts in [web/context/](mdc:web/context/).
