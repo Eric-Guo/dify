@@ -346,9 +346,6 @@ class WorkflowService:
                                 provider=provider,
                                 credential_type=PluginCredentialType.TOOL,
                             )
-                        else:
-                            # Check default workspace credential for this provider
-                            self._check_default_tool_credential(workflow.tenant_id, provider)
 
                 elif node_type == "agent":
                     agent_params = node_data.get("agent_parameters", {})
