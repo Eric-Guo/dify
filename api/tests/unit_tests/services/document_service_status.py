@@ -1235,6 +1235,37 @@ class TestDocumentServiceRenameDocument:
         # Verify upload file query was executed
         mock_document_service_dependencies["db_session"].query.assert_called()
 
+    def test_rename_document_without_upload_file_id(self, mock_document_service_dependencies):
+        """
+        Test document renaming when no upload file id is present.
+
+        Ensures that documents sourced from non-upload data sources are
+        renamed without attempting to update an upload file record.
+        """
+        # Arrange
+        dataset_id = "dataset-123"
+        document_id = "document-123"
+        new_name = "New Document Name"
+
+        dataset = DocumentStatusTestDataFactory.create_dataset_mock(dataset_id=dataset_id)
+        document = DocumentStatusTestDataFactory.create_document_mock(
+            document_id=document_id,
+            dataset_id=dataset_id,
+            tenant_id="tenant-123",
+            data_source_type="website_crawl",
+            data_source_info={"url": "https://example.com"},
+        )
+
+        mock_document_service_dependencies["get_dataset"].return_value = dataset
+        mock_document_service_dependencies["get_document"].return_value = document
+
+        # Act
+        DocumentService.rename_document(dataset_id, document_id, new_name)
+
+        # Assert
+        assert document.name == new_name
+        mock_document_service_dependencies["db_session"].query.assert_not_called()
+
     def test_rename_document_dataset_not_found_error(self, mock_document_service_dependencies):
         """
         Test error when dataset is not found.

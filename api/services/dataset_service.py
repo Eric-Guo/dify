@@ -1376,10 +1376,13 @@ class DocumentService:
 
         document.name = name
         db.session.add(document)
-        if document.data_source_info_dict:
-            db.session.query(UploadFile).where(
-                UploadFile.id == document.data_source_info_dict["upload_file_id"]
-            ).update({UploadFile.name: name})
+        upload_file_id = (
+            document.data_source_info_dict.get("upload_file_id")
+            if document.data_source_type == "upload_file" and document.data_source_info_dict
+            else None
+        )
+        if upload_file_id:
+            db.session.query(UploadFile).where(UploadFile.id == upload_file_id).update({UploadFile.name: name})
 
         db.session.commit()
 
