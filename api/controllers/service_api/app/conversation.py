@@ -47,6 +47,7 @@ class ConversationListQuery(BaseModel):
         description="The ID of the last record on the current page. Used to fetch the next page.",
     )
     limit: int = Field(default=20, ge=1, le=100, description="Number of records to return.")
+    pinned: bool | None = Field(default=None, description="Filter by pinned status")
     sort_by: Literal["created_at", "-created_at", "updated_at", "-updated_at"] = Field(
         default="-updated_at",
         description="Sorting field. Use the `-` prefix for descending order.",
@@ -208,7 +209,7 @@ class ConversationApi(Resource):
                 invoke_from="service-api",
                 last_id=query_args.last_id or None,
                 limit=query_args.limit,
-                pinned=None,
+                pinned=query_args.pinned,
                 sort_by=query_args.sort_by,
             )
             return dump_response(ConversationInfiniteScrollPagination, pagination)
@@ -317,6 +318,64 @@ class ConversationRenameApi(Resource):
             raise ConversationNotFoundHTTPError() from error
         except MessageNotExistsError as error:
             raise ConversationFirstMessageNotFoundHTTPError() from error
+
+
+@service_api_ns.route("/conversations/<uuid:c_id>/pin")
+class ConversationPinApi(Resource):
+    @error_responses(NotChatAppError, ConversationNotFoundHTTPError)
+    @service_api_ns.doc("pin_conversation")
+    @service_api_ns.doc(params={"c_id": "Conversation ID"})
+    @expect_user_json(service_api_ns)
+    @service_api_end_user_admission(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON))
+    def patch(self, context: ServiceApiEndUserContext, c_id: UUID) -> dict[str, str]:
+        """Pin an admitted user's conversation; reject unavailable ownership."""
+        app_mode = AppMode.value_of(context.app_mode)
+        if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT, AppMode.AGENT}:
+            raise NotChatAppError()
+
+        try:
+            application_services().conversation_commands.set_pinned(
+                ref=EndUserConversationRef(
+                    app_id=context.app_id,
+                    tenant_id=context.tenant_id,
+                    end_user_id=context.end_user_id,
+                    conversation_id=str(c_id),
+                ),
+                is_pinned=True,
+            )
+        except services.errors.conversation.ConversationNotExistsError as error:
+            raise ConversationNotFoundHTTPError() from error
+
+        return {"result": "success"}
+
+
+@service_api_ns.route("/conversations/<uuid:c_id>/unpin")
+class ConversationUnPinApi(Resource):
+    @error_responses(NotChatAppError, ConversationNotFoundHTTPError)
+    @service_api_ns.doc("unpin_conversation")
+    @service_api_ns.doc(params={"c_id": "Conversation ID"})
+    @expect_user_json(service_api_ns)
+    @service_api_end_user_admission(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON))
+    def patch(self, context: ServiceApiEndUserContext, c_id: UUID) -> dict[str, str]:
+        """Unpin an admitted user's conversation; reject unavailable ownership."""
+        app_mode = AppMode.value_of(context.app_mode)
+        if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT, AppMode.AGENT}:
+            raise NotChatAppError()
+
+        try:
+            application_services().conversation_commands.set_pinned(
+                ref=EndUserConversationRef(
+                    app_id=context.app_id,
+                    tenant_id=context.tenant_id,
+                    end_user_id=context.end_user_id,
+                    conversation_id=str(c_id),
+                ),
+                is_pinned=False,
+            )
+        except services.errors.conversation.ConversationNotExistsError as error:
+            raise ConversationNotFoundHTTPError() from error
+
+        return {"result": "success"}
 
 
 @service_api_ns.route("/conversations/<uuid:conversation_id>/variables")
