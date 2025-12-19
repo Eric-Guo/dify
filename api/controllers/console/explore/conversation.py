@@ -7,6 +7,7 @@ from uuid import UUID
 
 from flask_restx import Resource
 from pydantic import BaseModel, Field, field_validator
+from werkzeug.exceptions import BadRequest
 
 from controllers.common.controller_schemas import ConversationRenamePayload
 from controllers.common.schema import query_params_from_model, register_response_schema_models, register_schema_models
@@ -26,7 +27,11 @@ from extensions.ext_application_services import application_services
 from fields.conversation_fields import ConversationInfiniteScrollPagination, ResultResponse, SimpleConversation
 from libs.helper import UUIDStrOrEmpty, dump_response
 from machinery.context import RequestContext
-from services.errors.conversation import ConversationNotExistsError, LastConversationNotExistsError
+from services.errors.conversation import (
+    ConversationCannotDeleteTodayError,
+    ConversationNotExistsError,
+    LastConversationNotExistsError,
+)
 from services.errors.message import MessageNotExistsError
 from services.installed_app_access_service import InstalledAppNotFoundError, InstalledAppRef
 from services.installed_app_conversation_service import ConversationNameRequiredError, ConversationNotChatAppError
@@ -70,6 +75,8 @@ def _conversation_errors[**P, R](view: Callable[P, R]) -> Callable[P, R]:
             raise InstalledAppNotFoundHTTPError() from error
         except ConversationNotChatAppError as error:
             raise NotChatAppError() from error
+        except ConversationCannotDeleteTodayError as error:
+            raise BadRequest("Today's conversations cannot be deleted.") from error
         except ConversationNotExistsError as error:
             raise ConversationNotFoundHTTPError() from error
         except LastConversationNotExistsError as error:

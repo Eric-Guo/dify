@@ -5,9 +5,11 @@ import logging
 from sqlalchemy.orm import Session
 
 from core.agent.workspace import AgentWorkspaceNotFoundError, WorkspaceOwnerScope
+from libs.datetime_utils import ensure_naive_utc, naive_utc_now
 from models.agent import AgentWorkspaceOwnerType
 from models.model import App, Conversation
 from repositories.agent_workspace_repository import AgentWorkspaceRepository
+from services.errors.conversation import ConversationCannotDeleteTodayError
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +21,9 @@ def retire_conversation(*, app_model: App, conversation: Conversation, session: 
     all lifecycle changes together, then enqueue cleanup after that commit.
     This function neither commits nor dispatches background tasks.
     """
+    if ensure_naive_utc(conversation.created_at).date() == naive_utc_now().date():
+        raise ConversationCannotDeleteTodayError()
+
     workspaces = AgentWorkspaceRepository(session=session)
     binding_id = conversation.agent_workspace_binding_id
     if binding_id is not None:
@@ -47,4 +52,5 @@ def retire_conversation(*, app_model: App, conversation: Conversation, session: 
         conversation_id=conversation.id,
     )
     conversation.is_deleted = True
+    conversation.updated_at = naive_utc_now()
     return tuple(retired_workspace_ids)

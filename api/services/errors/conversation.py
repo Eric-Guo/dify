@@ -19,3 +19,7 @@ class ConversationVariableNotExistsError(BaseServiceError):
 
 class ConversationVariableTypeMismatchError(BaseServiceError):
     pass
+
+
+class ConversationCannotDeleteTodayError(BaseServiceError):
+    pass
