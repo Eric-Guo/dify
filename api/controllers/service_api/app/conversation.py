@@ -259,6 +259,8 @@ class ConversationDetailApi(Resource):
 
         try:
             ConversationService.delete(app_model, conversation_id_str, end_user, session=db.session())
+        except services.errors.conversation.ConversationCannotDeleteTodayError:
+            raise BadRequest("Today's conversations cannot be deleted.")
         except services.errors.conversation.ConversationNotExistsError:
             raise NotFound("Conversation Not Exists.")
         return "", 204

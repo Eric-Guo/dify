@@ -12,13 +12,14 @@ from core.llm_generator.llm_generator import LLMGenerator
 from core.model_context import use_credit_usage_metadata
 from factories import variable_factory
 from graphon.variables.types import SegmentType
-from libs.datetime_utils import naive_utc_now
+from libs.datetime_utils import ensure_naive_utc, naive_utc_now
 from libs.infinite_scroll_pagination import InfiniteScrollPagination
 from models import Account, ConversationVariable
 from models.agent import AgentWorkspaceOwnerType
 from models.model import App, Conversation, EndUser, Message
 from services.agent.workspace_service import AgentWorkspaceNotFoundError, AgentWorkspaceService, WorkspaceOwnerScope
 from services.errors.conversation import (
+    ConversationCannotDeleteTodayError,
     ConversationNotExistsError,
     ConversationVariableNotExistsError,
     ConversationVariableTypeMismatchError,
@@ -224,6 +225,8 @@ class ConversationService:
                 app_model.name,
                 conversation_id,
             )
+            if ensure_naive_utc(conversation.created_at).date() == naive_utc_now().date():
+                raise ConversationCannotDeleteTodayError()
             if binding_id is not None:
                 retired_binding_id = AgentWorkspaceService.retire_binding(
                     session=session,

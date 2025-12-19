@@ -4,7 +4,7 @@ from uuid import UUID
 from flask import request
 from pydantic import BaseModel, Field, TypeAdapter
 from sqlalchemy.orm import sessionmaker
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import BadRequest, NotFound
 
 from controllers.common.controller_schemas import ConversationRenamePayload
 from controllers.common.schema import query_params_from_model, register_response_schema_models, register_schema_models
@@ -24,7 +24,11 @@ from libs.helper import UUIDStrOrEmpty
 from models import Account
 from models.model import AppMode, InstalledApp
 from services.conversation_service import ConversationService
-from services.errors.conversation import ConversationNotExistsError, LastConversationNotExistsError
+from services.errors.conversation import (
+    ConversationCannotDeleteTodayError,
+    ConversationNotExistsError,
+    LastConversationNotExistsError,
+)
 from services.web_conversation_service import WebConversationService
 
 from .. import console_ns
@@ -119,6 +123,8 @@ class ConversationApi(InstalledAppResource):
         conversation_id = str(c_id)
         try:
             ConversationService.delete(app_model, conversation_id, current_user, session=db.session())
+        except ConversationCannotDeleteTodayError:
+            raise BadRequest("Today's conversations cannot be deleted.")
         except ConversationNotExistsError:
             raise NotFound("Conversation Not Exists.")
 

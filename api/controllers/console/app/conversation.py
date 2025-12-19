@@ -7,7 +7,7 @@ from flask_restx import Resource
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import func, or_
 from sqlalchemy.orm import Session, selectinload
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import BadRequest, NotFound
 
 from controllers.common.schema import query_params_from_model, register_response_schema_models, register_schema_models
 from controllers.common.session import with_session
@@ -48,7 +48,7 @@ from models import Conversation, EndUser, Message, MessageAnnotation
 from models.account import Account
 from models.model import App, AppMode
 from services.conversation_service import ConversationService
-from services.errors.conversation import ConversationNotExistsError
+from services.errors.conversation import ConversationCannotDeleteTodayError, ConversationNotExistsError
 
 
 class BaseConversationQuery(BaseModel):
@@ -218,6 +218,8 @@ class CompletionConversationDetailApi(Resource):
 
         try:
             ConversationService.delete(app_model, conversation_id_str, current_user, session=session)
+        except ConversationCannotDeleteTodayError:
+            raise BadRequest("Today's conversations cannot be deleted.")
         except ConversationNotExistsError:
             raise NotFound("Conversation Not Exists.")
 
@@ -387,6 +389,8 @@ class ChatConversationDetailApi(Resource):
 
         try:
             ConversationService.delete(app_model, conversation_id_str, current_user, session=session)
+        except ConversationCannotDeleteTodayError:
+            raise BadRequest("Today's conversations cannot be deleted.")
         except ConversationNotExistsError:
             raise NotFound("Conversation Not Exists.")
 
