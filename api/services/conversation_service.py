@@ -208,6 +208,7 @@ class ConversationService:
         tenant_id = app_model.tenant_id
         try:
             retired_workspace_ids = retire_conversation(app_model=app_model, conversation=conversation, session=session)
+            conversation.updated_at = naive_utc_now()
             session.commit()
         except Exception:
             session.rollback()
