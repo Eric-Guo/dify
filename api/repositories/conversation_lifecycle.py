@@ -5,6 +5,7 @@ import logging
 from sqlalchemy.orm import Session
 
 from core.agent.workspace import AgentWorkspaceNotFoundError, WorkspaceOwnerScope
+from libs.datetime_utils import naive_utc_now
 from models.agent import AgentWorkspaceOwnerType
 from models.model import App, Conversation
 from repositories.agent_workspace_repository import AgentWorkspaceRepository
@@ -47,4 +48,5 @@ def retire_conversation(*, app_model: App, conversation: Conversation, session: 
         conversation_id=conversation.id,
     )
     conversation.is_deleted = True
+    conversation.updated_at = naive_utc_now()
     return tuple(retired_workspace_ids)
