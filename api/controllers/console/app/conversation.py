@@ -4,6 +4,7 @@ from uuid import UUID
 
 from flask_restx import Resource
 from pydantic import BaseModel, Field, field_validator
+from werkzeug.exceptions import BadRequest
 
 from controllers.common.errors import ConversationNotFoundHTTPError, InvalidArgumentError, UnauthorizedError
 from controllers.common.rbac import PlainApp, RBACCheck
@@ -36,7 +37,7 @@ from machinery.context import RequestContext
 from services.app.console_service import ConsoleAppNotFoundError
 from services.entities.conversation_entities import ConsoleConversationFilters
 from services.errors.base import NoPermissionError
-from services.errors.conversation import ConversationNotExistsError
+from services.errors.conversation import ConversationCannotDeleteTodayError, ConversationNotExistsError
 
 
 class BaseConversationQuery(BaseModel):
@@ -179,6 +180,8 @@ class CompletionConversationDetailApi(Resource):
             )
         except ConsoleAppNotFoundError as exc:
             raise AppNotFoundError(str(exc)) from exc
+        except ConversationCannotDeleteTodayError as error:
+            raise BadRequest("Today's conversations cannot be deleted.") from error
         except ConversationNotExistsError as exc:
             raise ConversationNotFoundHTTPError() from exc
         return "", HTTPStatus.NO_CONTENT
@@ -283,6 +286,8 @@ class ChatConversationDetailApi(Resource):
             )
         except ConsoleAppNotFoundError as exc:
             raise AppNotFoundError(str(exc)) from exc
+        except ConversationCannotDeleteTodayError as error:
+            raise BadRequest("Today's conversations cannot be deleted.") from error
         except ConversationNotExistsError as exc:
             raise ConversationNotFoundHTTPError() from exc
         return "", HTTPStatus.NO_CONTENT
