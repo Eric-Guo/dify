@@ -76,7 +76,7 @@ Tests data retrieval for export:
 """
 
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from unittest.mock import MagicMock, Mock, create_autospec, patch
 
@@ -87,7 +87,7 @@ from models import Account
 from models.model import App, Conversation, EndUser, Message, MessageAnnotation
 from services.annotation_service import AppAnnotationService
 from services.conversation_service import ConversationService
-from services.errors.conversation import ConversationNotExistsError
+from services.errors.conversation import ConversationCannotDeleteTodayError, ConversationNotExistsError
 from services.errors.message import FirstMessageNotExistsError, MessageNotExistsError
 from services.message_service import MessageService
 
@@ -1372,8 +1372,11 @@ class TestConversationServiceExport:
         app_model = ConversationServiceTestDataFactory.create_app_mock()
         user = ConversationServiceTestDataFactory.create_account_mock()
         conversation_id = "conv-to-delete"
-        conversation = ConversationServiceTestDataFactory.create_conversation_mock(conversation_id=conversation_id)
         fixed_time = datetime(2024, 1, 1, tzinfo=UTC)
+        conversation = ConversationServiceTestDataFactory.create_conversation_mock(
+            conversation_id=conversation_id,
+            created_at=fixed_time - timedelta(days=1),
+        )
 
         mock_get_conversation.return_value = conversation
         mock_now.return_value = fixed_time
@@ -1386,3 +1389,25 @@ class TestConversationServiceExport:
         assert conversation.is_deleted is True
         assert conversation.updated_at == fixed_time
         mock_db_session.commit.assert_called_once()
+
+    @patch("services.conversation_service.naive_utc_now")
+    @patch("services.conversation_service.ConversationService.get_conversation")
+    def test_delete_conversation_blocks_today(self, mock_get_conversation, mock_now):
+        """
+        Test that today's conversations cannot be deleted.
+        """
+        # Arrange
+        app_model = ConversationServiceTestDataFactory.create_app_mock()
+        user = ConversationServiceTestDataFactory.create_account_mock()
+        fixed_time = datetime(2024, 1, 1, tzinfo=UTC)
+        conversation = ConversationServiceTestDataFactory.create_conversation_mock(
+            conversation_id="conv-today",
+            created_at=fixed_time,
+        )
+
+        mock_get_conversation.return_value = conversation
+        mock_now.return_value = fixed_time
+
+        # Act & Assert
+        with pytest.raises(ConversationCannotDeleteTodayError):
+            ConversationService.delete(app_model=app_model, conversation_id=conversation.id, user=user)

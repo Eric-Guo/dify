@@ -14,11 +14,12 @@ from core.variables.types import SegmentType
 from core.workflow.nodes.variable_assigner.common.impl import conversation_variable_updater_factory
 from extensions.ext_database import db
 from factories import variable_factory
-from libs.datetime_utils import naive_utc_now
+from libs.datetime_utils import ensure_naive_utc, naive_utc_now
 from libs.infinite_scroll_pagination import InfiniteScrollPagination
 from models import Account, ConversationVariable
 from models.model import App, Conversation, EndUser, Message
 from services.errors.conversation import (
+    ConversationCannotDeleteTodayError,
     ConversationNotExistsError,
     ConversationVariableNotExistsError,
     ConversationVariableTypeMismatchError,
@@ -187,6 +188,8 @@ class ConversationService:
             )
 
             conversation = cls.get_conversation(app_model, conversation_id, user)
+            if ensure_naive_utc(conversation.created_at).date() == naive_utc_now().date():
+                raise ConversationCannotDeleteTodayError()
             conversation.is_deleted = True
             conversation.updated_at = naive_utc_now()
             db.session.commit()

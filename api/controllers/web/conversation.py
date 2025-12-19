@@ -1,7 +1,7 @@
 from flask_restx import fields, marshal_with, reqparse
 from flask_restx.inputs import int_range
 from sqlalchemy.orm import Session
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import BadRequest, NotFound
 
 from controllers.web import web_ns
 from controllers.web.error import NotChatAppError
@@ -12,7 +12,11 @@ from fields.conversation_fields import conversation_infinite_scroll_pagination_f
 from libs.helper import uuid_value
 from models.model import AppMode
 from services.conversation_service import ConversationService
-from services.errors.conversation import ConversationNotExistsError, LastConversationNotExistsError
+from services.errors.conversation import (
+    ConversationCannotDeleteTodayError,
+    ConversationNotExistsError,
+    LastConversationNotExistsError,
+)
 from services.web_conversation_service import WebConversationService
 
 
@@ -124,6 +128,8 @@ class ConversationApi(WebApiResource):
         conversation_id = str(c_id)
         try:
             ConversationService.delete(app_model, conversation_id, end_user)
+        except ConversationCannotDeleteTodayError:
+            raise BadRequest("Today's conversations cannot be deleted.")
         except ConversationNotExistsError:
             raise NotFound("Conversation Not Exists.")
         return {"result": "success"}, 204

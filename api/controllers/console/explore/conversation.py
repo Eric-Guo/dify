@@ -4,7 +4,7 @@ from flask import request
 from flask_restx import marshal_with
 from pydantic import BaseModel, Field, model_validator
 from sqlalchemy.orm import Session
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import BadRequest, NotFound
 
 from controllers.common.schema import register_schema_models
 from controllers.console.explore.error import NotChatAppError
@@ -17,7 +17,11 @@ from libs.login import current_user
 from models import Account
 from models.model import AppMode
 from services.conversation_service import ConversationService
-from services.errors.conversation import ConversationNotExistsError, LastConversationNotExistsError
+from services.errors.conversation import (
+    ConversationCannotDeleteTodayError,
+    ConversationNotExistsError,
+    LastConversationNotExistsError,
+)
 from services.web_conversation_service import WebConversationService
 
 from .. import console_ns
@@ -102,6 +106,8 @@ class ConversationApi(InstalledAppResource):
             if not isinstance(current_user, Account):
                 raise ValueError("current_user must be an Account instance")
             ConversationService.delete(app_model, conversation_id, current_user)
+        except ConversationCannotDeleteTodayError:
+            raise BadRequest("Today's conversations cannot be deleted.")
         except ConversationNotExistsError:
             raise NotFound("Conversation Not Exists.")
 
