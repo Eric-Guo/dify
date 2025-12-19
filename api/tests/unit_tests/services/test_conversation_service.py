@@ -1359,35 +1359,30 @@ class TestConversationServiceExport:
         # Verify query filters for API source
         mock_query.where.assert_called()
 
-    @patch("services.conversation_service.delete_conversation_related_data")  # Mock Celery task
+    @patch("services.conversation_service.naive_utc_now")
+    @patch("services.conversation_service.ConversationService.get_conversation")
     @patch("services.conversation_service.db.session")  # Mock database session
-    def test_delete_conversation(self, mock_db_session, mock_delete_task):
+    def test_delete_conversation(self, mock_db_session, mock_get_conversation, mock_now):
         """
-        Test conversation deletion with async cleanup.
+        Test conversation soft deletion.
 
-        Deletion is a two-step process:
-        1. Immediately delete the conversation record from database
-        2. Trigger async background task to clean up related data
-           (messages, annotations, vector embeddings, file uploads)
+        Deletion sets is_deleted and updates timestamps without removing records.
         """
         # Arrange - Set up test data
         app_model = ConversationServiceTestDataFactory.create_app_mock()
         user = ConversationServiceTestDataFactory.create_account_mock()
         conversation_id = "conv-to-delete"
+        conversation = ConversationServiceTestDataFactory.create_conversation_mock(conversation_id=conversation_id)
+        fixed_time = datetime(2024, 1, 1, tzinfo=UTC)
 
-        # Set up database query mock
-        mock_query = MagicMock()
-        mock_db_session.query.return_value = mock_query
-        mock_query.where.return_value = mock_query  # Filter by conversation_id
+        mock_get_conversation.return_value = conversation
+        mock_now.return_value = fixed_time
 
         # Act - Delete the conversation
         ConversationService.delete(app_model=app_model, conversation_id=conversation_id, user=user)
 
-        # Assert - Verify two-step deletion process
-        # Step 1: Immediate database deletion
-        mock_query.delete.assert_called_once()  # DELETE query executed
-        mock_db_session.commit.assert_called_once()  # Transaction committed
-
-        # Step 2: Async cleanup task triggered
-        # The Celery task will handle cleanup of messages, annotations, etc.
-        mock_delete_task.delay.assert_called_once_with(conversation_id)
+        # Assert - Verify soft deletion
+        mock_get_conversation.assert_called_once_with(app_model, conversation_id, user)
+        assert conversation.is_deleted is True
+        assert conversation.updated_at == fixed_time
+        mock_db_session.commit.assert_called_once()
