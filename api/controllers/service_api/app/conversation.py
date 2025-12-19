@@ -5,6 +5,7 @@ from uuid import UUID
 
 from flask_restx import Resource
 from pydantic import BaseModel, Field, JsonValue, WithJsonSchema, field_validator
+from werkzeug.exceptions import BadRequest
 
 import services
 from controllers.common.controller_schemas import ConversationRenamePayload
@@ -253,6 +254,8 @@ class ConversationDetailApi(Resource):
                     conversation_id=str(conversation_id),
                 )
             )
+        except services.errors.conversation.ConversationCannotDeleteTodayError as error:
+            raise BadRequest("Today's conversations cannot be deleted.") from error
         except services.errors.conversation.ConversationNotExistsError as error:
             raise ConversationNotFoundHTTPError() from error
         return "", HTTPStatus.NO_CONTENT
