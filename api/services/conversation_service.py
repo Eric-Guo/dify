@@ -233,6 +233,7 @@ class ConversationService:
                 if retired_binding_id is None:
                     raise AgentWorkspaceNotFoundError("Conversation participant Binding is unavailable")
             conversation.is_deleted = True
+            conversation.updated_at = naive_utc_now()
             session.commit()
         except Exception:
             session.rollback()
