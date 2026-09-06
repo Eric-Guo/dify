@@ -7,7 +7,6 @@ from models import Account
 from models.model import App, Conversation, EndUser
 from services.errors.conversation import ConversationNotExistsError
 from tasks.collect_agent_resources_task import enqueue_agent_resource_collection
-from tasks.delete_conversation_task import delete_conversation_related_data
 
 logger = logging.getLogger(__name__)
 
@@ -43,9 +42,3 @@ class ConversationService:
                 tenant_id=tenant_id,
                 workspace_ids=retired_workspace_ids,
             )
-        try:
-            delete_conversation_related_data.delay(conversation_id)
-        except Exception:
-            # The soft-deleted row is a durable cleanup marker picked up by the
-            # periodic sweeper, so a broker outage must not resurrect or expose it.
-            logger.exception("Failed to enqueue cleanup for conversation %s", conversation_id)

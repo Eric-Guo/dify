@@ -1526,8 +1526,8 @@ class CeleryScheduleTasksConfig(BaseSettings):
         default=True,
     )
     ENABLE_CONVERSATION_CLEANUP_TASK: bool = Field(
-        description="Enable periodic recovery of soft-deleted conversation cleanup",
-        default=True,
+        description="Enable permanent cleanup of retained, soft-deleted conversations",
+        default=False,
     )
     CONVERSATION_CLEANUP_TASK_INTERVAL: PositiveInt = Field(
         description="Soft-deleted conversation cleanup recovery interval in minutes",

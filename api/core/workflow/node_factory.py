@@ -52,6 +52,7 @@ from core.workflow.nodes.agent_v2 import DifyAgentNode
 from core.workflow.nodes.agent_v2.binding_resolver import WorkflowAgentBindingResolver
 from core.workflow.nodes.agent_v2.output_adapter import WorkflowAgentOutputAdapter
 from core.workflow.nodes.agent_v2.runtime_request_builder import WorkflowAgentRuntimeRequestBuilder
+from core.workflow.nodes.document_extractor.node import DocumentExtractorNode
 from core.workflow.nodes.human_input.callback import DifyHITLCallback
 from core.workflow.nodes.human_input.entities import HumanInputNodeData as DifyHumanInputNodeData
 from core.workflow.nodes.human_input_v2.node import HumanInputNode as HumanInputV2Node
@@ -628,6 +629,8 @@ class DifyNodeFactory(NodeFactory):
         node_version: str,
         node_data: Mapping[str, Any] | BaseNodeData | None = None,
     ) -> type[Node]:
+        if node_type == BuiltinNodeTypes.DOCUMENT_EXTRACTOR:
+            return DocumentExtractorNode
         if node_type == BuiltinNodeTypes.LLM:
             return DifyLLMNode
         return resolve_workflow_node_class(
