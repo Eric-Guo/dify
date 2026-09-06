@@ -52,4 +52,5 @@ def retire_conversation(*, app_model: App, conversation: Conversation, session: 
         conversation_id=conversation.id,
     )
     conversation.is_deleted = True
+    conversation.updated_at = naive_utc_now()
     return tuple(retired_workspace_ids)
