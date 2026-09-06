@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "데이터 원본 추가",
   "nodes.dataSource.supportedFileFormats": "지원되는 파일 형식",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "파일 확장자, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "DOCX 주석 추출",
+  "nodes.docExtractor.extractComments.tooltip": "추출된 텍스트 끝에 문서 주석을 추가합니다.",
   "nodes.docExtractor.inputVar": "입력 변수",
   "nodes.docExtractor.learnMore": "더 알아보세요",
   "nodes.docExtractor.outputVars.text": "추출된 텍스트",

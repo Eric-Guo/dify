@@ -348,9 +348,7 @@ class EnterpriseService:
             if not app_id:
                 raise ValueError("app_id must be provided.")
             if access_mode not in ["public", "private", "private_all", "sso_verified"]:
-                raise ValueError(
-                    "access_mode must be one of 'public', 'private', 'private_all', or 'sso_verified'"
-                )
+                raise ValueError("access_mode must be one of 'public', 'private', 'private_all', or 'sso_verified'")
 
             data: dict = {"appId": app_id, "accessMode": access_mode}
             if subjects:

@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "データソースを追加",
   "nodes.dataSource.supportedFileFormats": "サポートされているファイル形式",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "ファイル拡張子、例：doc",
+  "nodes.docExtractor.extractComments.title": "DOCX のコメントを抽出",
+  "nodes.docExtractor.extractComments.tooltip": "文書のコメントを抽出テキストの末尾に追加します。",
   "nodes.docExtractor.inputVar": "入力変数",
   "nodes.docExtractor.learnMore": "詳細はこちら",
   "nodes.docExtractor.outputVars.text": "抽出されたテキスト",

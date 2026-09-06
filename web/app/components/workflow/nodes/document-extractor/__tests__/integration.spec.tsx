@@ -107,6 +107,7 @@ const createConfigResult = (
   readOnly: false,
   inputs: createData(),
   handleVarChanges: vi.fn(),
+  handleExtractCommentsChange: vi.fn(),
   filterVar: () => true,
   ...overrides,
 })

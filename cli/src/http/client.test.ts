@@ -704,17 +704,22 @@ describe('fetch() and stream()', () => {
 
   it('stream() forces retryAttempts=0 even when client default would allow retries', async () => {
     let attempts = 0
-    const client = createHttpClient({
-      baseURL: openAPIBase('http://nonexistent-host-12345.invalid'),
-      bearer: 'dfoa_test',
-      retryAttempts: 5,
-      timeoutMs: 0,
-      logger: (e) => {
-        if (e.phase === 'request' || e.phase === 'retry') attempts++
-      },
-    })
-    await expect(client.stream('workspaces')).rejects.toBeDefined()
-    expect(attempts).toBe(1)
+    const stub = await startStub((req) => req.socket.destroy())
+    try {
+      const client = createHttpClient({
+        baseURL: openAPIBase(stub.url),
+        bearer: 'dfoa_test',
+        retryAttempts: 5,
+        timeoutMs: 0,
+        logger: (e) => {
+          if (e.phase === 'request' || e.phase === 'retry') attempts++
+        },
+      })
+      await expect(client.stream('workspaces')).rejects.toBeDefined()
+      expect(attempts).toBe(1)
+    } finally {
+      await stub.stop()
+    }
   })
 })
 

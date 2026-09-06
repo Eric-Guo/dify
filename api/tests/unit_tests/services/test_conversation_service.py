@@ -8,6 +8,7 @@ in-memory SQLite sessions with persisted ORM rows.
 """
 
 import json
+from datetime import timedelta
 from unittest.mock import MagicMock
 
 import pytest
@@ -27,6 +28,8 @@ from models.model import App, AppMode, Conversation
 from services import conversation_service
 from services.agent.workspace_service import AgentWorkspaceService
 from services.conversation_service import ConversationService
+from services.errors.conversation import ConversationCannotDeleteTodayError
+from tasks.delete_conversation_task import delete_conversation_related_data
 
 TENANT_ID = "11111111-1111-1111-1111-111111111111"
 APP_ID = "22222222-2222-2222-2222-222222222222"
@@ -172,7 +175,9 @@ class ConversationServiceTestDataFactory:
 
 def test_delete_retires_then_commits_before_enqueue(monkeypatch: pytest.MonkeyPatch, sqlite_session: Session) -> None:
     app = ConversationServiceTestDataFactory.create_app()
-    conversation = ConversationServiceTestDataFactory.create_conversation()
+    conversation = ConversationServiceTestDataFactory.create_conversation(
+        created_at=naive_utc_now() - timedelta(days=1)
+    )
     conversation.agent_workspace_binding_id = "conversation-binding-1"
     sqlite_session.add(conversation)
     sqlite_session.flush()
@@ -189,7 +194,7 @@ def test_delete_retires_then_commits_before_enqueue(monkeypatch: pytest.MonkeyPa
         MagicMock(side_effect=lambda **_kwargs: events.append("enqueue")),
     )
     delete_related = MagicMock()
-    monkeypatch.setattr(conversation_service.delete_conversation_related_data, "delay", delete_related)
+    monkeypatch.setattr(delete_conversation_related_data, "delay", delete_related)
 
     ConversationService.delete(app, conversation.id, None, session=sqlite_session)
 
@@ -197,12 +202,14 @@ def test_delete_retires_then_commits_before_enqueue(monkeypatch: pytest.MonkeyPa
     assert conversation.is_deleted is True
     assert get_binding.call_args.kwargs["binding_id"] == "conversation-binding-1"
     assert retire_binding.call_args.kwargs["binding_id"] == "conversation-binding-1"
-    delete_related.assert_called_once_with(conversation.id)
+    delete_related.assert_not_called()
 
 
 def test_delete_commit_failure_does_not_enqueue(monkeypatch: pytest.MonkeyPatch, sqlite_session: Session) -> None:
     app = ConversationServiceTestDataFactory.create_app()
-    conversation = ConversationServiceTestDataFactory.create_conversation()
+    conversation = ConversationServiceTestDataFactory.create_conversation(
+        created_at=naive_utc_now() - timedelta(days=1)
+    )
     conversation.agent_workspace_binding_id = "binding-1"
     sqlite_session.add(conversation)
     sqlite_session.commit()
@@ -223,7 +230,7 @@ def test_delete_commit_failure_does_not_enqueue(monkeypatch: pytest.MonkeyPatch,
     enqueue_collection = MagicMock()
     delete_related = MagicMock()
     monkeypatch.setattr(conversation_service, "enqueue_agent_resource_collection", enqueue_collection)
-    monkeypatch.setattr(conversation_service.delete_conversation_related_data, "delay", delete_related)
+    monkeypatch.setattr(delete_conversation_related_data, "delay", delete_related)
 
     with pytest.raises(RuntimeError, match="commit failed"):
         ConversationService.delete(app, conversation.id, None, session=sqlite_session)
@@ -234,16 +241,18 @@ def test_delete_commit_failure_does_not_enqueue(monkeypatch: pytest.MonkeyPatch,
     delete_related.assert_not_called()
 
 
-def test_delete_keeps_soft_deleted_marker_when_dispatch_fails(
+def test_delete_retains_conversation_without_dispatching_cleanup(
     monkeypatch: pytest.MonkeyPatch, sqlite_session: Session
 ) -> None:
     app = ConversationServiceTestDataFactory.create_app()
-    conversation = ConversationServiceTestDataFactory.create_conversation()
+    conversation = ConversationServiceTestDataFactory.create_conversation(
+        created_at=naive_utc_now() - timedelta(days=1)
+    )
     sqlite_session.add(conversation)
     sqlite_session.flush()
     monkeypatch.setattr(ConversationService, "get_conversation", MagicMock(return_value=conversation))
     monkeypatch.setattr(
-        conversation_service.delete_conversation_related_data,
+        delete_conversation_related_data,
         "delay",
         MagicMock(side_effect=RuntimeError("broker unavailable")),
     )
@@ -455,3 +464,24 @@ class TestConversationServiceConversationalVariable:
         assert result.data[0]["id"] == VARIABLE_ID
         assert result.data[0]["name"] == "test_var"
         assert result.data[0]["value"] == "matching"
+
+
+def test_delete_rejects_today_without_retiring_workspace(
+    monkeypatch: pytest.MonkeyPatch, sqlite_session: Session
+) -> None:
+    app = ConversationServiceTestDataFactory.create_app()
+    conversation = ConversationServiceTestDataFactory.create_conversation(created_at=naive_utc_now())
+    sqlite_session.add(conversation)
+    sqlite_session.commit()
+    monkeypatch.setattr(ConversationService, "get_conversation", MagicMock(return_value=conversation))
+    retire = MagicMock()
+    cleanup = MagicMock()
+    monkeypatch.setattr(AgentWorkspaceService, "retire_binding", retire)
+    monkeypatch.setattr(delete_conversation_related_data, "delay", cleanup)
+
+    with pytest.raises(ConversationCannotDeleteTodayError):
+        ConversationService.delete(app, conversation.id, None, session=sqlite_session)
+
+    assert sqlite_session.get(Conversation, conversation.id).is_deleted is False
+    retire.assert_not_called()
+    cleanup.assert_not_called()

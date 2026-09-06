@@ -22,6 +22,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 from flask import Flask, request
+from sqlalchemy import select
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 from werkzeug.exceptions import BadRequest, NotFound
@@ -31,8 +32,10 @@ from controllers.service_api.app.conversation import (
     ConversationApi,
     ConversationDetailApi,
     ConversationListQuery,
+    ConversationPinApi,
     ConversationRenameApi,
     ConversationRenamePayload,
+    ConversationUnPinApi,
     ConversationVariableDetailApi,
     ConversationVariableInfiniteScrollPaginationResponse,
     ConversationVariableResponse,
@@ -47,6 +50,7 @@ from graphon.variables import StringSegment
 from graphon.variables.types import SegmentType
 from models.enums import ConversationFromSource
 from models.model import App, AppMode, Conversation, EndUser
+from models.web import PinnedConversation
 from services.conversation_service import ConversationService
 from services.errors.conversation import (
     ConversationNotExistsError,
@@ -829,3 +833,30 @@ class TestConversationVariableDetailApiController:
         assert result["value_type"] == "number"
         assert result["value"] == "1"
         assert result["created_at"] == int(created_at.timestamp())
+
+
+@pytest.mark.parametrize("mode", [AppMode.CHAT, AppMode.AGENT])
+def test_service_api_pin_and_unpin_persist_for_the_end_user(
+    app: Flask, monkeypatch: pytest.MonkeyPatch, sqlite_session: Session, mode: AppMode
+) -> None:
+    conversation_id = str(uuid.uuid4())
+    conversation = _conversation(conversation_id=conversation_id)
+    sqlite_session.add(conversation)
+    sqlite_session.commit()
+    app_model = App(id="app-1", mode=mode)
+    end_user = _end_user()
+    module = sys.modules["controllers.service_api.app.conversation"]
+    monkeypatch.setattr(module, "db", SimpleNamespace(session=lambda: sqlite_session))
+    pin = ConversationPinApi()
+    unpin = ConversationUnPinApi()
+
+    with app.test_request_context(f"/conversations/{conversation_id}/pin", method="PATCH"):
+        assert unwrap(pin.patch)(pin, app_model, end_user, conversation_id) == {"result": "success"}
+    persisted = sqlite_session.scalar(select(PinnedConversation))
+    assert persisted is not None
+    assert persisted.conversation_id == conversation_id
+    assert persisted.created_by == end_user.id
+
+    with app.test_request_context(f"/conversations/{conversation_id}/unpin", method="PATCH"):
+        assert unwrap(unpin.patch)(unpin, app_model, end_user, conversation_id) == {"result": "success"}
+    assert sqlite_session.scalar(select(PinnedConversation)) is None

@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Aggiungere un'origine dati",
   "nodes.dataSource.supportedFileFormats": "Formati di file supportati",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "Estensione del file, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "Estrai i commenti DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "Aggiungi i commenti del documento alla fine del testo estratto.",
   "nodes.docExtractor.inputVar": "Variabile di input",
   "nodes.docExtractor.learnMore": "Ulteriori informazioni",
   "nodes.docExtractor.outputVars.text": "Testo estratto",

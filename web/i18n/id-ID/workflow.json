@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Menambahkan sumber data",
   "nodes.dataSource.supportedFileFormats": "Format file yang didukung",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "Ekstensi file, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "Ekstrak komentar DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "Tambahkan komentar dokumen di akhir teks yang diekstrak.",
   "nodes.docExtractor.inputVar": "Variabel Masukan",
   "nodes.docExtractor.learnMore": "Pelajari lebih lanjut",
   "nodes.docExtractor.outputVars.text": "Teks yang diekstrak",

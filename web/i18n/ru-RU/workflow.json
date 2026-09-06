@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Добавление источника данных",
   "nodes.dataSource.supportedFileFormats": "Поддерживаемые форматы файлов",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "Расширение файла, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "Извлекать комментарии DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "Добавлять комментарии документа в конец извлечённого текста.",
   "nodes.docExtractor.inputVar": "Входная переменная",
   "nodes.docExtractor.learnMore": "Подробнее",
   "nodes.docExtractor.outputVars.text": "Извлеченный текст",

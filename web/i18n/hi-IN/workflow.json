@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "डेटा स्रोत जोड़ें",
   "nodes.dataSource.supportedFileFormats": "समर्थित फ़ाइल प्रारूप",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "फाइल एक्सटेंशन, जैसे कि doc",
+  "nodes.docExtractor.extractComments.title": "DOCX टिप्पणियाँ निकालें",
+  "nodes.docExtractor.extractComments.tooltip": "दस्तावेज़ की टिप्पणियाँ निकाले गए पाठ के अंत में जोड़ें।",
   "nodes.docExtractor.inputVar": "इनपुट वेरिएबल",
   "nodes.docExtractor.learnMore": "और जानो",
   "nodes.docExtractor.outputVars.text": "निकाला गया पाठ",

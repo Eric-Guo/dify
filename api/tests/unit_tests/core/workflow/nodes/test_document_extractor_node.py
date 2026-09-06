@@ -1,14 +1,17 @@
 import io
 from unittest.mock import Mock, patch
 
+import docx
 import pandas as pd
 import pytest
 from docx.oxml.text.paragraph import CT_P
 
 from core.app.entities.app_invoke_entities import InvokeFrom, UserFrom
+from core.workflow.node_factory import DifyNodeFactory
 from graphon.entities import GraphInitParams
 from graphon.enums import BuiltinNodeTypes, WorkflowNodeExecutionStatus
 from graphon.file import File, FileTransferMethod
+from graphon.file.enums import FileType
 from graphon.node_events import NodeRunResult
 from graphon.nodes.document_extractor import DocumentExtractorNode, DocumentExtractorNodeData
 from graphon.nodes.document_extractor.exc import TextExtractionError, UnsupportedFileTypeError
@@ -38,6 +41,50 @@ def graph_init_params() -> GraphInitParams:
         invoke_from=InvokeFrom.DEBUGGER,
         call_depth=0,
     )
+
+
+@pytest.mark.parametrize("extract_comments", [False, True])
+@pytest.mark.parametrize("array_input", [False, True])
+@pytest.mark.parametrize("extension", [".docx", None])
+def test_workflow_docx_comment_option(graph_init_params, extract_comments, array_input, extension):
+    document = docx.Document()
+    paragraph = document.add_paragraph("Document body")
+    document.add_comment(paragraph.runs, "Review comment", author="Reviewer")
+    content = io.BytesIO()
+    document.save(content)
+    http_client = Mock()
+    http_client.get.return_value.content = content.getvalue()
+    file = File(
+        file_type=FileType.DOCUMENT,
+        transfer_method=FileTransferMethod.REMOTE_URL,
+        remote_url="https://example.com/document.docx",
+        extension=extension,
+        mime_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
+    runtime = Mock()
+    runtime.variable_pool.get.return_value = ArrayFileSegment(value=[file]) if array_input else FileSegment(value=file)
+    node_class = DifyNodeFactory._resolve_node_class(node_type=BuiltinNodeTypes.DOCUMENT_EXTRACTOR, node_version="1")
+    data = node_class.validate_node_data(
+        {
+            "title": "Document Extractor",
+            "variable_selector": ["start", "file"],
+            "is_extract_comments": extract_comments,
+        }
+    )
+    node = node_class(
+        node_id="extractor",
+        data=data,
+        graph_init_params=graph_init_params,
+        graph_runtime_state=runtime,
+        http_client=http_client,
+    )
+
+    result = node._run()
+
+    expected = "Document body\nReview comment" if extract_comments else "Document body"
+    assert result.status == WorkflowNodeExecutionStatus.SUCCEEDED
+    assert result.outputs["text"] == (ArrayStringSegment(value=[expected]) if array_input else expected)
+    http_client.get.assert_called_once_with("https://example.com/document.docx")
 
 
 @pytest.fixture

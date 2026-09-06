@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Veri kaynağı ekleme",
   "nodes.dataSource.supportedFileFormats": "Desteklenen dosya biçimleri",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "Dosya uzantısı, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "DOCX yorumlarını çıkar",
+  "nodes.docExtractor.extractComments.tooltip": "Belge yorumlarını çıkarılan metnin sonuna ekle.",
   "nodes.docExtractor.inputVar": "Giriş Değişkeni",
   "nodes.docExtractor.learnMore": "Daha fazla bilgi edinin",
   "nodes.docExtractor.outputVars.text": "Ayıklanan metin",

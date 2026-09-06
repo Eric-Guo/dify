@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "เพิ่มแหล่งข้อมูล",
   "nodes.dataSource.supportedFileFormats": "รูปแบบไฟล์ที่รองรับ",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "นามสกุลไฟล์ e.g. doc",
+  "nodes.docExtractor.extractComments.title": "ดึงข้อคิดเห็นจาก DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "เพิ่มข้อคิดเห็นของเอกสารต่อท้ายข้อความที่ดึงออกมา",
   "nodes.docExtractor.inputVar": "ตัวแปรอินพุต",
   "nodes.docExtractor.learnMore": "ศึกษาเพิ่มเติม",
   "nodes.docExtractor.outputVars.text": "ข้อความที่แยกออกมา",

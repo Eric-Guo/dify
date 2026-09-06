@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Hinzufügen einer Datenquelle",
   "nodes.dataSource.supportedFileFormats": "Unterstützte Dateiformate",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "Dateiendung, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "DOCX-Kommentare extrahieren",
+  "nodes.docExtractor.extractComments.tooltip": "Dokumentkommentare an den extrahierten Text anhängen.",
   "nodes.docExtractor.inputVar": "Eingabevariable",
   "nodes.docExtractor.learnMore": "Weitere Informationen",
   "nodes.docExtractor.outputVars.text": "Extrahierter Text",

@@ -1,9 +1,5 @@
-from collections.abc import Sequence
-
-from core.workflow.nodes.base import BaseNodeData
+from graphon.nodes.document_extractor import DocumentExtractorNodeData as GraphonDocumentExtractorNodeData
 
 
-class DocumentExtractorNodeData(BaseNodeData):
-    variable_selector: Sequence[str]
-    # Whether to extract comment contents from documents (currently affects DOCX files)
+class DocumentExtractorNodeData(GraphonDocumentExtractorNodeData):
     is_extract_comments: bool = False

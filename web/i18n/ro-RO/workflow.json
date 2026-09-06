@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Adăugarea sursei de date",
   "nodes.dataSource.supportedFileFormats": "Formate de fișiere acceptate",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "Extensie de fișier, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "Extrage comentariile DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "Adaugă comentariile documentului la sfârșitul textului extras.",
   "nodes.docExtractor.inputVar": "Variabilă de intrare",
   "nodes.docExtractor.learnMore": "Află mai multe",
   "nodes.docExtractor.outputVars.text": "Text extras",

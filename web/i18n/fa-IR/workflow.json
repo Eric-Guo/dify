@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "افزودن منبع داده",
   "nodes.dataSource.supportedFileFormats": "فرمت‌های فایل پشتیبانی‌شده",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "پسوند فایل، مثلاً doc",
+  "nodes.docExtractor.extractComments.title": "استخراج نظرات DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "نظرات سند را به انتهای متن استخراج‌شده اضافه کنید.",
   "nodes.docExtractor.inputVar": "متغیر ورودی",
   "nodes.docExtractor.learnMore": "بیشتر بدانید",
   "nodes.docExtractor.outputVars.text": "متن استخراج‌شده",

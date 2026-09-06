@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "新增資料來源",
   "nodes.dataSource.supportedFileFormats": "支援的檔案格式",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "檔案副檔名， e.g. doc",
+  "nodes.docExtractor.extractComments.title": "擷取 DOCX 註解",
+  "nodes.docExtractor.extractComments.tooltip": "將文件註解附加到擷取文字的末尾。",
   "nodes.docExtractor.inputVar": "輸入變數",
   "nodes.docExtractor.learnMore": "瞭解更多資訊",
   "nodes.docExtractor.outputVars.text": "提取的文字",

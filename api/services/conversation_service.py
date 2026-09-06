@@ -27,7 +27,6 @@ from services.errors.conversation import (
 )
 from services.errors.message import MessageNotExistsError
 from tasks.collect_agent_resources_task import enqueue_agent_resource_collection
-from tasks.delete_conversation_task import delete_conversation_related_data
 
 logger = logging.getLogger(__name__)
 
@@ -192,13 +191,14 @@ class ConversationService:
     @classmethod
     def delete(cls, app_model: App, conversation_id: str, user: Account | EndUser | None, *, session: Session):
         """
-        Delete a conversation only if it belongs to the given user and app context.
+        Soft-delete a conversation from an earlier UTC date in the given user and app context.
 
         Conversation deletion is the product lifecycle boundary for its
         Workspace. Physical collection happens only after the retire commit.
 
         Raises:
             ConversationNotExistsError: When the conversation is not visible to the current user.
+            ConversationCannotDeleteTodayError: When the conversation was created today (UTC).
         """
         conversation = cls.get_conversation(app_model, conversation_id, user, session=session)
         binding_id = conversation.agent_workspace_binding_id
@@ -246,12 +246,6 @@ class ConversationService:
                 tenant_id=app_model.tenant_id,
                 binding_ids=(retired_binding_id,),
             )
-        try:
-            delete_conversation_related_data.delay(conversation.id)
-        except Exception:
-            # The soft-deleted row is a durable cleanup marker picked up by the
-            # periodic sweeper, so a broker outage must not resurrect or expose it.
-            logger.exception("Failed to enqueue cleanup for conversation %s", conversation.id)
 
     @classmethod
     def get_conversational_variable(

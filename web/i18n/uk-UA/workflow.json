@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Додати джерело даних",
   "nodes.dataSource.supportedFileFormats": "Підтримувані формати файлів",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "Розширення файлу, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "Видобувати коментарі DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "Додавати коментарі документа в кінець видобутого тексту.",
   "nodes.docExtractor.inputVar": "Вхідна змінна",
   "nodes.docExtractor.learnMore": "Дізнатися більше",
   "nodes.docExtractor.outputVars.text": "Витягнутий текст",

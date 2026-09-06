@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Add data source",
   "nodes.dataSource.supportedFileFormats": "Supported file formats",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "File extension, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "DOCX-opmerkingen extraheren",
+  "nodes.docExtractor.extractComments.tooltip": "Voeg documentopmerkingen toe aan het einde van de geëxtraheerde tekst.",
   "nodes.docExtractor.inputVar": "Input Variable",
   "nodes.docExtractor.learnMore": "Learn more",
   "nodes.docExtractor.outputVars.text": "Extracted text",

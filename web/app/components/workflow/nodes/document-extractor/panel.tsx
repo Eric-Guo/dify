@@ -1,10 +1,10 @@
 import type { FC } from 'react'
 import type { DocExtractorNodeType } from './types'
 import type { NodePanelProps } from '@/app/components/workflow/types'
+import { Switch } from '@langgenius/dify-ui/switch'
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import Field from '@/app/components/workflow/nodes/_base/components/field'
-import Switch from '@/app/components/base/switch'
 import { BlockEnum } from '@/app/components/workflow/types'
 import { useLocale } from '@/context/i18n'
 import { LanguagesSupported } from '@/i18n-config/language'
@@ -38,13 +38,10 @@ const Panel: FC<NodePanelProps<DocExtractorNodeType>> = ({ id, data }) => {
       .filter((item, index, self) => self.indexOf(item) === index) // remove duplicates
       .join(locale !== LanguagesSupported[1] ? ', ' : '、 ')
   })()
-  const {
-    readOnly,
-    inputs,
-    handleVarChanges,
-    handleExtractCommentsChange,
-    filterVar,
-  } = useConfig(id, data)
+  const { readOnly, inputs, handleVarChanges, handleExtractCommentsChange, filterVar } = useConfig(
+    id,
+    data,
+  )
 
   return (
     <div className="mt-2">
@@ -72,18 +69,18 @@ const Panel: FC<NodePanelProps<DocExtractorNodeType>> = ({ id, data }) => {
           </>
         </Field>
         <Field
-          title={t(`${i18nPrefix}.extractComments.title`)}
-          tooltip={t(`${i18nPrefix}.extractComments.tooltip`)}
+          title={t(($) => $[`${i18nPrefix}.extractComments.title`], { ns: 'workflow' })}
+          tooltip={t(($) => $[`${i18nPrefix}.extractComments.tooltip`], { ns: 'workflow' })}
           operations={
             <Switch
-              defaultValue={!!inputs.is_extract_comments}
-              onChange={handleExtractCommentsChange}
-              size='md'
+              aria-label={t(($) => $[`${i18nPrefix}.extractComments.title`], { ns: 'workflow' })}
+              checked={!!inputs.is_extract_comments}
+              onCheckedChange={handleExtractCommentsChange}
+              size="md"
               disabled={readOnly}
             />
           }
-        >
-        </Field>
+        ></Field>
       </div>
       <Split />
       <div>

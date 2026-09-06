@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Dodawanie źródła danych",
   "nodes.dataSource.supportedFileFormats": "Obsługiwane formaty plików",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "Rozszerzenie pliku, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "Wyodrębnij komentarze DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "Dołącz komentarze dokumentu na końcu wyodrębnionego tekstu.",
   "nodes.docExtractor.inputVar": "Zmienna wejściowa",
   "nodes.docExtractor.learnMore": "Dowiedz się więcej",
   "nodes.docExtractor.outputVars.text": "Wyodrębniony tekst",

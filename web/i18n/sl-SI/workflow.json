@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Dodajanje vira podatkov",
   "nodes.dataSource.supportedFileFormats": "Podprte oblike zapisa datotek",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "Razširitev datoteke, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "Izlušči komentarje DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "Dodaj komentarje dokumenta na konec izluščenega besedila.",
   "nodes.docExtractor.inputVar": "Vhodna spremenljivka",
   "nodes.docExtractor.learnMore": "Nauči se več",
   "nodes.docExtractor.outputVars.text": "Izvlečene besedilo",

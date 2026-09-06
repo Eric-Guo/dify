@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "إضافة مصدر بيانات",
   "nodes.dataSource.supportedFileFormats": "تنسيقات الملفات المدعومة",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "امتداد الملف، مثل doc",
+  "nodes.docExtractor.extractComments.title": "استخراج تعليقات DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "إضافة تعليقات المستند إلى نهاية النص المستخرج.",
   "nodes.docExtractor.inputVar": "متغير الإدخال",
   "nodes.docExtractor.learnMore": "تعرف على المزيد",
   "nodes.docExtractor.outputVars.text": "نص مستخرج",

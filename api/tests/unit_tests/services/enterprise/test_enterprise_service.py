@@ -134,11 +134,10 @@ class TestWebAppAuth:
     def test_batch_is_user_allowed_returns_empty_for_no_apps(self):
         assert EnterpriseService.WebAppAuth.batch_is_user_allowed_to_access_webapps("u1", []) == {}
 
-    def test_batch_is_user_allowed_raises_on_empty_response(self):
+    def test_batch_is_user_allowed_returns_no_permissions_on_empty_response(self):
         with patch(f"{MODULE}.EnterpriseRequest") as req:
             req.send_request.return_value = None
-            with pytest.raises(ValueError, match="No data found"):
-                EnterpriseService.WebAppAuth.batch_is_user_allowed_to_access_webapps("u1", ["a1"])
+            assert EnterpriseService.WebAppAuth.batch_is_user_allowed_to_access_webapps("u1", ["a1"]) == {}
 
     def test_get_app_access_mode_raises_on_empty_app_id(self):
         with pytest.raises(ValueError, match="app_id must be provided"):
@@ -169,11 +168,10 @@ class TestWebAppAuth:
         assert result["a1"].access_mode == "public"
         assert result["a2"].access_mode == "private"
 
-    def test_batch_get_raises_on_invalid_format(self):
+    def test_batch_get_returns_no_access_modes_on_invalid_format(self):
         with patch(f"{MODULE}.EnterpriseRequest") as req:
             req.send_request.return_value = {"accessModes": "not-a-dict"}
-            with pytest.raises(ValueError, match="Invalid data format"):
-                EnterpriseService.WebAppAuth.batch_get_app_access_mode_by_id(["a1"])
+            assert EnterpriseService.WebAppAuth.batch_get_app_access_mode_by_id(["a1"]) == {}
 
     def test_update_access_mode_raises_on_empty_app_id(self):
         with pytest.raises(ValueError, match="app_id must be provided"):

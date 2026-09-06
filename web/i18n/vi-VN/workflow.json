@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "Thêm nguồn dữ liệu",
   "nodes.dataSource.supportedFileFormats": "Các định dạng tệp được hỗ trợ",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "Phần mở rộng tệp, e.g. doc",
+  "nodes.docExtractor.extractComments.title": "Trích xuất nhận xét DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "Thêm nhận xét của tài liệu vào cuối văn bản đã trích xuất.",
   "nodes.docExtractor.inputVar": "Biến đầu vào",
   "nodes.docExtractor.learnMore": "Tìm hiểu thêm",
   "nodes.docExtractor.outputVars.text": "Văn bản trích xuất",

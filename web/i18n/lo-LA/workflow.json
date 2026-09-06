@@ -494,6 +494,8 @@
   "nodes.dataSource.add": "ເພີ່ມແຫຼ່ງຂໍ້ມູນ",
   "nodes.dataSource.supportedFileFormats": "ຮູບແບບໄຟລ໌ທີ່ຮອງຮັບ",
   "nodes.dataSource.supportedFileFormatsPlaceholder": "ນາມສະກຸນໄຟລ໌, ເຊັ່ນ doc",
+  "nodes.docExtractor.extractComments.title": "ດຶງຄຳຄິດເຫັນຈາກ DOCX",
+  "nodes.docExtractor.extractComments.tooltip": "ເພີ່ມຄຳຄິດເຫັນຂອງເອກະສານໃສ່ທ້າຍຂໍ້ຄວາມທີ່ດຶງອອກມາ.",
   "nodes.docExtractor.inputVar": "ຕົວປ່ຽນນຳເຂົ້າ",
   "nodes.docExtractor.learnMore": "ຮຽນຮູ້ເພີ່ມເຕີມ",
   "nodes.docExtractor.outputVars.text": "ຂໍ້ຄວາມທີ່ສະກັດໄດ້",

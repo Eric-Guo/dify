@@ -10,16 +10,6 @@ import useConfig from '../use-config'
 
 let mockLocale = 'en-US'
 
-vi.mock('@/app/components/workflow/nodes/_base/components/field', () => ({
-  __esModule: true,
-  default: ({ title, children }: { title: ReactNode; children: ReactNode }) => (
-    <div>
-      <div>{title}</div>
-      {children}
-    </div>
-  ),
-}))
-
 vi.mock('@/app/components/workflow/nodes/_base/components/output-vars', () => ({
   __esModule: true,
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -78,6 +68,7 @@ const createConfigResult = (
   readOnly: false,
   inputs: createData(),
   handleVarChanges: vi.fn(),
+  handleExtractCommentsChange: vi.fn(),
   filterVar: () => true,
   ...overrides,
 })
@@ -96,6 +87,52 @@ describe('document-extractor/panel', () => {
     vi.clearAllMocks()
     mockLocale = 'en-US'
     mockUseConfig.mockReturnValue(createConfigResult())
+  })
+
+  it('edits the comment option and reflects persisted configuration changes', async () => {
+    const user = userEvent.setup()
+    const handleExtractCommentsChange = vi.fn()
+    mockUseConfig.mockReturnValue(createConfigResult({ handleExtractCommentsChange }))
+    const { rerender } = render(<Panel id="doc-node" data={createData()} panelProps={panelProps} />)
+    const toggle = screen.getByRole('switch', {
+      name: 'workflow.nodes.docExtractor.extractComments.title',
+    })
+    expect(toggle).not.toBeChecked()
+
+    await user.click(toggle)
+
+    expect(handleExtractCommentsChange).toHaveBeenCalledWith(true)
+    mockUseConfig.mockReturnValue(
+      createConfigResult({
+        inputs: createData({ is_extract_comments: true }),
+        handleExtractCommentsChange,
+      }),
+    )
+    rerender(
+      <Panel
+        id="doc-node"
+        data={createData({ is_extract_comments: true })}
+        panelProps={panelProps}
+      />,
+    )
+    expect(toggle).toBeChecked()
+  })
+
+  it('prevents comment option changes in read-only workflows', async () => {
+    const user = userEvent.setup()
+    const handleExtractCommentsChange = vi.fn()
+    mockUseConfig.mockReturnValue(
+      createConfigResult({ readOnly: true, handleExtractCommentsChange }),
+    )
+    render(<Panel id="doc-node" data={createData()} panelProps={panelProps} />)
+    const toggle = screen.getByRole('switch', {
+      name: 'workflow.nodes.docExtractor.extractComments.title',
+    })
+
+    await user.click(toggle)
+
+    expect(toggle).toHaveAttribute('aria-disabled', 'true')
+    expect(handleExtractCommentsChange).not.toHaveBeenCalled()
   })
 
   it('wires variable changes and renders supported file types for english locales', async () => {
