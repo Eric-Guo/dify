@@ -211,6 +211,7 @@ __all__ = [
     "datasource_content_preview",
     "email_register",
     "endpoint",
+    "enterprise_webapp",
     "extension",
     "external",
     "feature",

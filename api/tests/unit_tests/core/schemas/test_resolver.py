@@ -667,7 +667,7 @@ class TestSchemaResolverClass:
             current["properties"][f"level_{i}"] = {"type": "object", "properties": {}}
             current = current["properties"][f"level_{i}"]
 
-        # Performance comparison
+        # Compare CPU time so scheduler delays from other test workers are not measured.
         for test_case in test_cases:
             schema = test_case["schema"]
             expected = test_case["expected"]
@@ -680,17 +680,17 @@ class TestSchemaResolverClass:
             # Measure hybrid performance
             hybrid_times = []
             for _ in range(10):
-                start = time.perf_counter()
+                start = time.thread_time()
                 result_hybrid = _has_dify_refs_hybrid(schema)
-                elapsed = time.perf_counter() - start
+                elapsed = time.thread_time() - start
                 hybrid_times.append(elapsed)
 
             # Measure recursive performance
             recursive_times = []
             for _ in range(10):
-                start = time.perf_counter()
+                start = time.thread_time()
                 result_recursive = _has_dify_refs_recursive(schema)
-                elapsed = time.perf_counter() - start
+                elapsed = time.thread_time() - start
                 recursive_times.append(elapsed)
 
             avg_hybrid = sum(hybrid_times) / len(hybrid_times)

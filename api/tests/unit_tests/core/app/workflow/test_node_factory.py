@@ -5,6 +5,8 @@ import pytest
 
 from core.app.entities.app_invoke_entities import InvokeFrom, UserFrom, build_dify_run_context
 from core.workflow.node_factory import DifyNodeFactory
+from core.workflow.nodes.document_extractor.node import DocumentExtractorNode
+from graphon.entities import GraphInitParams
 from graphon.enums import BuiltinNodeTypes
 
 
@@ -32,10 +34,6 @@ class DummyHttpRequestNode(DummyNode):
 
 
 class DummyKnowledgeRetrievalNode(DummyNode):
-    pass
-
-
-class DummyDocumentExtractorNode(DummyNode):
     pass
 
 
@@ -73,7 +71,9 @@ class TestDifyNodeFactory:
         )
 
         return DifyNodeFactory(
-            graph_init_params=SimpleNamespace(run_context=run_context),
+            graph_init_params=GraphInitParams(
+                workflow_id="workflow", graph_config={}, run_context=run_context, call_depth=0
+            ),
             graph_runtime_state=SimpleNamespace(),
         )
 
@@ -156,11 +156,20 @@ class TestDifyNodeFactory:
         assert isinstance(node, DummyKnowledgeRetrievalNode)
         assert node.kwargs == {}
 
-    def test_create_node_document_extractor_branch(self, monkeypatch: pytest.MonkeyPatch):
+    def test_create_node_document_extractor_branch(self):
         factory = self._factory()
-        self._stub_node_resolution(monkeypatch, DummyDocumentExtractorNode)
 
-        node = factory.create_node({"id": "node-1", "data": {"type": BuiltinNodeTypes.DOCUMENT_EXTRACTOR}})
+        node = factory.create_node(
+            {
+                "id": "node-1",
+                "data": {
+                    "type": BuiltinNodeTypes.DOCUMENT_EXTRACTOR,
+                    "variable_selector": ["start", "file"],
+                    "is_extract_comments": True,
+                },
+            }
+        )
 
-        assert isinstance(node, DummyDocumentExtractorNode)
-        assert "unstructured_api_config" in node.kwargs
+        assert isinstance(node, DocumentExtractorNode)
+        assert node.node_data.is_extract_comments is True
+        assert node.http_client is factory._remote_file_http_client

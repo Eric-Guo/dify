@@ -332,13 +332,13 @@ class ConversationPinApi(Resource):
     @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON))
     def patch(self, app_model: App, end_user: EndUser, c_id):
         app_mode = AppMode.value_of(app_model.mode)
-        if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT}:
+        if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT, AppMode.AGENT}:
             raise NotChatAppError()
 
         conversation_id = str(c_id)
 
         try:
-            WebConversationService.pin(app_model, conversation_id, end_user)
+            WebConversationService.pin(app_model, conversation_id, end_user, session=db.session())
         except services.errors.conversation.ConversationNotExistsError:
             raise NotFound("Conversation Not Exists.")
 
@@ -360,11 +360,11 @@ class ConversationUnPinApi(Resource):
     @validate_app_token(fetch_user_arg=FetchUserArg(fetch_from=WhereisUserArg.JSON))
     def patch(self, app_model: App, end_user: EndUser, c_id):
         app_mode = AppMode.value_of(app_model.mode)
-        if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT}:
+        if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT, AppMode.AGENT}:
             raise NotChatAppError()
 
         conversation_id = str(c_id)
-        WebConversationService.unpin(app_model, conversation_id, end_user)
+        WebConversationService.unpin(app_model, conversation_id, end_user, session=db.session())
 
         return {"result": "success"}
 

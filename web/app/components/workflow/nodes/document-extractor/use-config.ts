@@ -58,12 +58,15 @@ const useConfig = (id: string, payload: DocExtractorNodeType) => {
     [getType, inputs, setInputs],
   )
 
-  const handleExtractCommentsChange = useCallback((checked: boolean) => {
-    const newInputs = produce(inputs, (draft) => {
-      draft.is_extract_comments = checked
-    })
-    setInputs(newInputs)
-  }, [inputs, setInputs])
+  const handleExtractCommentsChange = useCallback(
+    (checked: boolean) => {
+      const newInputs = produce(inputs, (draft) => {
+        draft.is_extract_comments = checked
+      })
+      setInputs(newInputs)
+    },
+    [inputs, setInputs],
+  )
 
   return {
     readOnly,
