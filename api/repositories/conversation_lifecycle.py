@@ -15,11 +15,12 @@ logger = logging.getLogger(__name__)
 
 
 def retire_conversation(*, app_model: App, conversation: Conversation, session: Session) -> tuple[str, ...]:
-    """Retire a conversation and all its workspaces in the caller's transaction.
+    """Soft-delete an older conversation and retire its workspaces atomically.
 
     The caller must validate conversation ownership before calling, commit
     all lifecycle changes together, then enqueue cleanup after that commit.
     This function neither commits nor dispatches background tasks.
+    Conversations created today (UTC) must remain active.
     """
     if ensure_naive_utc(conversation.created_at).date() == naive_utc_now().date():
         raise ConversationCannotDeleteTodayError()
