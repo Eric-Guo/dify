@@ -12,11 +12,10 @@ from controllers.console.wraps import (
     setup_required,
     validate_request,
 )
-from extensions.ext_database import db
+from extensions.ext_application_services import application_services
 from fields.base import ResponseModel
 from libs.helper import dump_response
 from libs.login import login_required
-from services.app_service import AppService
 from services.enterprise.enterprise_service import EnterpriseService
 from services.system_feature_service import SystemFeatureService
 
@@ -103,6 +102,5 @@ class AppConsoleWebAuthPermissionApi(Resource):
             return dump_response(WebAppResultResponse, {"result": True})
 
         query = validate_request(WebAppQuery)
-        app_code = AppService.get_app_code_by_id(query.appId, session=db.session())
-        result = EnterpriseService.WebAppAuth.is_user_allowed_to_access_webapp(str(current_user.id), app_code)
+        result = application_services().webapp_access.is_user_allowed(user_id=str(current_user.id), app_id=query.appId)
         return dump_response(WebAppResultResponse, {"result": bool(result)})
