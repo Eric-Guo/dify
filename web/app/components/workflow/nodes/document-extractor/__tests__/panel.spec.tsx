@@ -104,7 +104,7 @@ describe('document-extractor/panel', () => {
 
     await user.click(toggle)
 
-    expect(handleExtractCommentsChange).toHaveBeenCalledWith(true)
+    expect(handleExtractCommentsChange).toHaveBeenCalledWith(true, expect.anything())
     mockUseConfig.mockReturnValue(
       createConfigResult({
         inputs: createData({ is_extract_comments: true }),

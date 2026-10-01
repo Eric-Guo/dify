@@ -212,7 +212,9 @@ def test_delete_retires_then_commits_before_enqueue(
     workspace, binding = conversation_workspace
     app = ConversationServiceTestDataFactory.create_app()
     account = ConversationServiceTestDataFactory.create_account()
-    conversation = ConversationServiceTestDataFactory.create_conversation(created_at=naive_utc_now() - timedelta(days=1))
+    conversation = ConversationServiceTestDataFactory.create_conversation(
+        created_at=naive_utc_now() - timedelta(days=1)
+    )
     conversation.agent_workspace_binding_id = binding.id if has_root_binding else None
     node_workspace = AgentWorkspace(
         id="workspace-node",
@@ -262,7 +264,9 @@ def test_delete_commit_failure_rolls_back_all_lifecycle_changes_without_enqueue(
     workspace, binding = conversation_workspace
     app = ConversationServiceTestDataFactory.create_app()
     account = ConversationServiceTestDataFactory.create_account()
-    conversation = ConversationServiceTestDataFactory.create_conversation(created_at=naive_utc_now() - timedelta(days=1))
+    conversation = ConversationServiceTestDataFactory.create_conversation(
+        created_at=naive_utc_now() - timedelta(days=1)
+    )
     conversation.agent_workspace_binding_id = binding.id
     sqlite_session.add(conversation)
     sqlite_session.commit()
@@ -296,7 +300,9 @@ def test_retire_leaves_commit_and_cleanup_to_the_caller(
 ) -> None:
     workspace, binding = conversation_workspace
     app = ConversationServiceTestDataFactory.create_app()
-    conversation = ConversationServiceTestDataFactory.create_conversation(created_at=naive_utc_now() - timedelta(days=1))
+    conversation = ConversationServiceTestDataFactory.create_conversation(
+        created_at=naive_utc_now() - timedelta(days=1)
+    )
     conversation.agent_workspace_binding_id = binding.id
     sqlite_session.add(conversation)
     sqlite_session.commit()
@@ -351,7 +357,9 @@ def test_retire_rejects_participants_owned_by_another_scope(
     workspace.owner_id = scope.owner_id
     workspace.owner_scope_key = scope.owner_scope_key
     app = ConversationServiceTestDataFactory.create_app()
-    conversation = ConversationServiceTestDataFactory.create_conversation(created_at=naive_utc_now() - timedelta(days=1))
+    conversation = ConversationServiceTestDataFactory.create_conversation(
+        created_at=naive_utc_now() - timedelta(days=1)
+    )
     conversation.agent_workspace_binding_id = binding.id
     sqlite_session.add(conversation)
     sqlite_session.commit()
@@ -368,7 +376,9 @@ def test_delete_retains_conversation_without_dispatching_cleanup(
 ) -> None:
     app = ConversationServiceTestDataFactory.create_app()
     account = ConversationServiceTestDataFactory.create_account()
-    conversation = ConversationServiceTestDataFactory.create_conversation(created_at=naive_utc_now() - timedelta(days=1))
+    conversation = ConversationServiceTestDataFactory.create_conversation(
+        created_at=naive_utc_now() - timedelta(days=1)
+    )
     sqlite_session.add(conversation)
     sqlite_session.flush()
     monkeypatch.setattr(

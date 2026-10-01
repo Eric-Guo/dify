@@ -17,6 +17,7 @@ from core.app.entities.app_invoke_entities import InvokeFrom
 from models.enums import ConversationFromSource, ConversationStatus, CreatorUserRole
 from models.model import App, AppMode, Conversation, Message
 from models.web import PinnedConversation
+from repositories import conversation_lifecycle
 from repositories.installed_app_conversation_repository import SQLAlchemyInstalledAppConversationRepository
 from services.installed_app_conversation_service import InstalledAppConversationService
 from tests.unit_tests.controllers.console.explore.test_installed_app_admission import (
@@ -352,6 +353,35 @@ def test_delete_returns_empty_204_after_commit_and_closed_sessions(conversations
     conversations.assert_sessions_closed()
     _error(conversations.request("delete", conversation_id=conversation.id), status=404, code="conversation_not_found")
     assert len(conversations.cleanup_calls) == 1
+
+
+@pytest.mark.parametrize("created_today", [False, True])
+def test_delete_preserves_utc_date_policy_and_messages(
+    conversations: _Conversations, monkeypatch: pytest.MonkeyPatch, created_today: bool
+) -> None:
+    now = datetime(2026, 10, 1, 0, 0, 1)
+    monkeypatch.setattr(conversation_lifecycle, "naive_utc_now", lambda: now)
+    conversation = _conversation(conversations)
+    _message(conversations, conversation)
+    with conversations.factory.begin() as session:
+        stored = session.get(Conversation, conversation.id)
+        assert stored is not None
+        stored.created_at = now if created_today else now - timedelta(seconds=2)
+
+    response = conversations.request("delete", conversation_id=conversation.id)
+
+    assert response.status_code == (400 if created_today else 204)
+    if created_today:
+        assert response.get_json()["message"] == "Today's conversations cannot be deleted."
+        assert conversations.cleanup_calls == []
+    with conversations.factory() as session:
+        stored = session.get(Conversation, conversation.id)
+        assert stored is not None
+        assert stored.is_deleted is (not created_today)
+        if not created_today:
+            assert stored.updated_at == now
+        assert session.scalar(select(Message).where(Message.conversation_id == conversation.id)) is not None
+    conversations.assert_sessions_closed()
 
 
 def test_pin_and_unpin_are_idempotent_and_preserve_other_accounts_pin(conversations: _Conversations) -> None:

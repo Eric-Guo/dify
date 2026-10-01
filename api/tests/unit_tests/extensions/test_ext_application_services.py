@@ -3,6 +3,7 @@
 import json
 import logging
 from collections.abc import Mapping
+from datetime import timedelta
 from decimal import Decimal
 from io import BytesIO
 from types import SimpleNamespace
@@ -26,6 +27,7 @@ from extensions import ext_application_services
 from extensions.application_services.app import AppServices
 from extensions.ext_database import db
 from extensions.ext_redis import RedisClientWrapper
+from libs.datetime_utils import naive_utc_now
 from machinery.context import RequestContext
 from models.account import Account, Tenant, TenantAccountJoin, TenantAccountRole
 from models.enums import CustomizeTokenStrategy
@@ -1071,7 +1073,7 @@ def test_build_application_services_wires_installed_app_admission(
         pytest.param(UnicodeDecodeError("utf-8", b"\xff", 0, 1, "invalid"), id="invalid-encoding"),
     ],
 )
-def test_installed_app_admission_normalizes_known_enterprise_errors(
+def test_installed_app_admission_denies_access_when_enterprise_is_unavailable(
     sqlite_session_factory: sessionmaker[Session],
     installed_app_ref: InstalledAppRef,
     enterprise_error: Exception,
@@ -1087,14 +1089,13 @@ def test_installed_app_admission_normalizes_known_enterprise_errors(
             initialization_password="",
             redis=_redis(),
         )
-        with pytest.raises(WebAppAccessUnavailableError) as raised:
+        with pytest.raises(InstalledAppAccessDeniedError):
             services.installed_apps.access.get_access(
                 installed_app_id=installed_app_ref.id,
                 tenant_id=installed_app_ref.tenant_id,
                 account_id=account_id,
             )
 
-    assert raised.value.__cause__ is enterprise_error
     enterprise_request.assert_called_once_with(
         "GET", "/webapp/permission", params={"userId": account_id, "appId": installed_app_ref.app_id}
     )
@@ -1300,7 +1301,7 @@ def _query_webapp_access(
         pytest.param(UnicodeDecodeError("utf-8", b"\xff", 0, 1, "invalid"), id="invalid-encoding"),
     ],
 )
-def test_webapp_access_queries_map_known_enterprise_errors_to_unavailable(
+def test_webapp_access_queries_preserve_strict_modes_and_tolerant_permissions(
     sqlite_session_factory: sessionmaker[Session],
     query_kind: str,
     enterprise_error: Exception,
@@ -1314,11 +1315,14 @@ def test_webapp_access_queries_map_known_enterprise_errors_to_unavailable(
             initialization_password="",
             redis=_redis(),
         )
-        with pytest.raises(WebAppAccessUnavailableError) as raised:
-            _query_webapp_access(services.webapp_access, query_kind)
-
-    assert type(raised.value) is WebAppAccessUnavailableError
-    assert raised.value.__cause__ is enterprise_error
+        if query_kind == "single-mode":
+            with pytest.raises(WebAppAccessUnavailableError) as raised:
+                _query_webapp_access(services.webapp_access, query_kind)
+            assert type(raised.value) is WebAppAccessUnavailableError
+            assert raised.value.__cause__ is enterprise_error
+        else:
+            result = _query_webapp_access(services.webapp_access, query_kind)
+            assert result == (False if query_kind == "single-permission" else {})
     assert enterprise_request.call_count == 1
 
 
@@ -1345,7 +1349,7 @@ def test_single_webapp_mode_maps_invalid_enum_or_field_value_to_unavailable(
 
 @pytest.mark.parametrize("query_kind", ["single-mode", "single-permission", "batch-modes", "batch-permissions"])
 @pytest.mark.parametrize("failure", [TypeError("adapter bug"), ValueError("unexpected programming error")])
-def test_webapp_access_queries_do_not_hide_unknown_programming_errors(
+def test_webapp_access_queries_preserve_error_boundaries(
     sqlite_session_factory: sessionmaker[Session], query_kind: str, failure: Exception
 ) -> None:
     with patch("services.enterprise.enterprise_service.EnterpriseRequest.send_request", side_effect=failure):
@@ -1355,10 +1359,13 @@ def test_webapp_access_queries_do_not_hide_unknown_programming_errors(
             initialization_password="",
             redis=_redis(),
         )
-        with pytest.raises(type(failure)) as raised:
-            _query_webapp_access(services.webapp_access, query_kind)
-
-    assert raised.value is failure
+        if isinstance(failure, ValueError) and query_kind != "single-mode":
+            result = _query_webapp_access(services.webapp_access, query_kind)
+            assert result == (False if query_kind == "single-permission" else {})
+        else:
+            with pytest.raises(type(failure)) as raised:
+                _query_webapp_access(services.webapp_access, query_kind)
+            assert raised.value is failure
 
 
 def test_build_application_services_wires_webapp_permission(
@@ -1567,7 +1574,7 @@ def test_installed_app_management_composition_reads_real_installations_and_curre
 
 
 @pytest.mark.parametrize("naming_fails", [False, True])
-def test_installed_app_conversations_wire_real_persistence_naming_and_cleanup(
+def test_installed_app_conversations_wire_real_persistence_naming_and_retention(
     sqlite_session_factory: sessionmaker[Session],
     installed_app_ref: InstalledAppRef,
     monkeypatch: pytest.MonkeyPatch,
@@ -1588,6 +1595,7 @@ def test_installed_app_conversations_wire_real_persistence_naming_and_cleanup(
             from_account_id=account_id,
             from_end_user_id=None,
             invoke_from="explore",
+            created_at=naive_utc_now() - timedelta(days=1),
         )
         session.add(conversation)
         session.flush()
@@ -1689,7 +1697,12 @@ def test_installed_app_conversations_wire_real_persistence_naming_and_cleanup(
             installed_app=admitted_app, account_id=account_id, conversation_id=conversation_id
         )
     assert get_credit_usage_metadata() == previous_metadata
-    assert queued == [conversation_id]
+    assert queued == []
+    with sqlite_session_factory() as session:
+        stored = session.get(Conversation, conversation_id)
+        assert stored is not None
+        assert stored.is_deleted
+        assert session.scalar(select(Message).where(Message.conversation_id == conversation_id)) is not None
     assert active_connections == 0
 
 
@@ -1817,7 +1830,7 @@ def test_installed_app_visibility_skips_unnecessary_enterprise_requests(
 
 
 @pytest.mark.parametrize("failure_stage", ["settings", "permissions"])
-def test_installed_app_visibility_propagates_access_unavailable_with_original_cause(
+def test_installed_app_visibility_hides_apps_when_enterprise_is_unavailable(
     sqlite_session_factory: sessionmaker[Session],
     failure_stage: str,
 ) -> None:
@@ -1835,9 +1848,5 @@ def test_installed_app_visibility_propagates_access_unavailable_with_original_ca
             initialization_password="",
             redis=_redis(),
         )
-        with pytest.raises(WebAppAccessUnavailableError) as caught:
-            services.installed_apps.access.get_visible_app_ids(user_id="viewer", app_ids=("app-1",))
-
-    assert type(caught.value) is WebAppAccessUnavailableError
-    assert caught.value.__cause__ is enterprise_error
+        assert services.installed_apps.access.get_visible_app_ids(user_id="viewer", app_ids=("app-1",)) == frozenset()
     assert enterprise_request.call_count == (2 if failure_stage == "permissions" else 1)

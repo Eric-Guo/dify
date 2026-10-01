@@ -5110,6 +5110,8 @@ export default interface Resources {
     'nodes.dataSource.add': 'Add Data Source'
     'nodes.dataSource.supportedFileFormats': 'Supported file formats'
     'nodes.dataSource.supportedFileFormatsPlaceholder': 'File extension, e.g. doc'
+    'nodes.docExtractor.extractComments.title': 'Extract DOCX comments'
+    'nodes.docExtractor.extractComments.tooltip': 'Append document comments to the extracted text.'
     'nodes.docExtractor.inputVar': 'Input Variable'
     'nodes.docExtractor.learnMore': 'Learn more'
     'nodes.docExtractor.outputVars.text': 'Extracted text'
