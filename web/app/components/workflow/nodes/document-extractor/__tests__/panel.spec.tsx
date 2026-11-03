@@ -1,6 +1,7 @@
 import type { DocExtractorNodeType } from '../types'
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useNodes } from 'reactflow'
 import { createNode } from '@/app/components/workflow/__tests__/fixtures'
 import { renderWorkflowFlowComponent } from '@/app/components/workflow/__tests__/workflow-test-env'
 import { consoleQuery } from '@/service/console'
@@ -63,3 +64,67 @@ it.each([
     expect(screen.getByText(outputType)).toBeInTheDocument()
   },
 )
+
+function LivePanel() {
+  const node = useNodes<DocExtractorNodeType>().find((node) => node.id === 'doc-node')
+  return node ? (
+    <Panel
+      id={node.id}
+      data={node.data}
+      panelProps={{
+        getInputVars: () => [],
+        toVarInputs: () => [],
+        runInputData: {},
+        runInputDataRef: { current: {} },
+        setRunInputData: () => {},
+        runResult: null,
+      }}
+    />
+  ) : null
+}
+
+it.each([false, true])('persists DOCX comment extraction with readOnly=%s', async (readOnly) => {
+  const data: DocExtractorNodeType = {
+    title: 'Document Extractor',
+    desc: '',
+    type: BlockEnum.DocExtractor,
+    variable_selector: [],
+    is_array_file: false,
+  }
+  const queryClient = createConsoleQueryClient()
+  queryClient.setQueryData(consoleQuery.files.supportType.get.queryKey(), {
+    allowed_extensions: ['docx'],
+  })
+  queryClient.setQueryData(consoleQuery.spec.schemaDefinitions.get.queryKey(), [])
+  seedToolProviders(queryClient, {
+    builtInTools: [],
+    customTools: [],
+    workflowTools: [],
+    mcpTools: [],
+  })
+  const sync = vi.fn(async () => null)
+  const { store } = renderWorkflowFlowComponent(<LivePanel />, {
+    queryClient,
+    nodes: [createNode({ id: 'doc-node', data })],
+    initialStoreState: { canvasReadOnly: readOnly },
+    hooksStoreProps: { doSyncWorkflowDraft: sync },
+  })
+  const user = userEvent.setup()
+  const toggle = screen.getByRole('switch', {
+    name: 'workflow.nodes.docExtractor.extractComments.title',
+  })
+  expect(toggle).not.toBeChecked()
+
+  await user.click(toggle)
+  act(() => store.getState().flushPendingSync())
+
+  if (readOnly) {
+    expect(toggle).not.toBeChecked()
+    expect(sync).not.toHaveBeenCalled()
+  } else {
+    expect(toggle).toBeChecked()
+    expect(sync).toHaveBeenCalledOnce()
+    await user.click(toggle)
+    expect(toggle).not.toBeChecked()
+  }
+})

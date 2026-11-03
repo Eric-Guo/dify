@@ -1,12 +1,14 @@
 """Conversation commands exercise persistence, ownership and cleanup ordering."""
 
 from dataclasses import dataclass, replace
+from datetime import timedelta
 from uuid import uuid4
 
 import pytest
 from sqlalchemy import Engine, delete, event, select, update
 from sqlalchemy.orm import Session, sessionmaker
 
+from libs.datetime_utils import naive_utc_now
 from machinery.context import RequestContext
 from models.account import Account
 from models.agent import (
@@ -49,6 +51,7 @@ def end_user_ref(sqlite_session_factory: sessionmaker[Session]) -> EndUserConver
             from_account_id=None,
             is_deleted=False,
         )
+        conversation.created_at = naive_utc_now() - timedelta(days=1)
         session.add(conversation)
         session.flush()
         return EndUserConversationRef(
@@ -327,6 +330,7 @@ def console_deletion(sqlite_session_factory: sessionmaker[Session]) -> ConsoleDe
             from_end_user_id=None,
             is_deleted=False,
         )
+        conversation.created_at = naive_utc_now() - timedelta(days=1)
         session.add(conversation)
         session.flush()
         workspaces: list[AgentWorkspace] = []

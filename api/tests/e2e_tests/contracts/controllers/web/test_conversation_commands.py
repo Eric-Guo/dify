@@ -1,6 +1,7 @@
 """Conversation commands through real Web admission and SQLite transactions."""
 
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Literal
 from uuid import uuid4
@@ -16,6 +17,7 @@ from models.agent import AgentWorkingResourceStatus, AgentWorkspace, AgentWorksp
 from models.enums import ConversationFromSource, CreatorUserRole
 from models.model import AppMode, Conversation, EndUser
 from models.web import PinnedConversation
+from repositories import conversation_lifecycle
 from repositories.conversation_repository import ConversationRepository
 from services.conversation_command_service import ConversationCommandService
 from tests.e2e_tests.contracts.controllers.web import test_conversation_rename as rename_tests
@@ -255,3 +257,28 @@ def test_failed_delete_commit_rolls_back_without_publishing_cleanup(harness: _Ha
     assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
     harness.assert_not_deleted()
     source.assert_closed()
+
+
+@pytest.mark.parametrize("created_today", [False, True])
+def test_delete_preserves_utc_date_policy(
+    harness: _Harness, monkeypatch: pytest.MonkeyPatch, created_today: bool
+) -> None:
+    now = datetime(2026, 11, 3, 0, 0, 1)
+    monkeypatch.setattr(conversation_lifecycle, "naive_utc_now", lambda: now)
+    with harness.source.factory.begin() as session:
+        conversation = session.get_one(Conversation, harness.source.conversation.id)
+        conversation.created_at = now if created_today else now - timedelta(seconds=2)
+
+    response = harness.request("delete")
+
+    assert response.status_code == (HTTPStatus.BAD_REQUEST if created_today else HTTPStatus.NO_CONTENT)
+    if created_today:
+        assert response.json is not None
+        assert response.json["message"] == "Today's conversations cannot be deleted."
+        harness.assert_not_deleted()
+    else:
+        with harness.source.factory() as session:
+            conversation = session.get_one(Conversation, harness.source.conversation.id)
+            assert conversation.is_deleted
+            assert conversation.updated_at == now
+    harness.source.assert_closed()

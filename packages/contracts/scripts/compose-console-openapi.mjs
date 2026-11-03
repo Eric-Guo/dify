@@ -85,8 +85,22 @@ export function loadConsoleDocument(root = resolve(import.meta.dirname, '..')) {
     name,
     document: JSON.parse(readFileSync(resolve(root, path), 'utf8')),
   }))
+  // thape serves these Enterprise proxy routes locally. Keep their client types
+  // owned by the Enterprise snapshot, including its access-mode GET operation.
+  const enterpriseProxyPaths = new Set([
+    '/enterprise/webapp/app/access-mode',
+    '/enterprise/webapp/app/subject/search',
+    '/enterprise/webapp/app/subjects',
+    '/enterprise/webapp/permission',
+  ])
+  const consoleDocument = {
+    ...community.console,
+    paths: Object.fromEntries(
+      Object.entries(community.console.paths).filter(([path]) => !enterpriseProxyPaths.has(path)),
+    ),
+  }
   return composeConsoleDocuments([
-    { name: 'console', document: community.console },
+    { name: 'console', document: consoleDocument },
     { name: 'fast', document: community.fast, stripPrefix: '/console/api' },
     ...snapshots,
   ])

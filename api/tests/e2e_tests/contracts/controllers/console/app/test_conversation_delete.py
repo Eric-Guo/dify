@@ -2,6 +2,7 @@
 
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import Literal
 from uuid import uuid4
@@ -19,12 +20,14 @@ from enums import DeploymentEdition
 from enums.account import TenantAccountRole
 from extensions.ext_database import db
 from extensions.ext_login import DifyLoginManager, unauthorized_handler
+from libs.datetime_utils import naive_utc_now
 from libs.external_api import ExternalApi
 from libs.token import generate_csrf_token
 from models import Account, Tenant, TenantAccountJoin
 from models.agent import AgentWorkingResourceStatus, AgentWorkspace, AgentWorkspaceOwnerType
 from models.enums import ConversationFromSource
 from models.model import App, AppMode, Conversation
+from repositories import conversation_lifecycle
 from repositories.conversation_repository import ConversationRepository
 from services.conversation_command_service import ConversationCommandService
 from tests.helpers.unit.model_factories import make_account, make_app, make_conversation
@@ -117,6 +120,7 @@ def harness(
         from_account_id=account.id,
         is_deleted=False,
     )
+    conversation.created_at = naive_utc_now() - timedelta(days=1)
     with sqlite_session_factory.begin() as session:
         session.add_all(
             [
@@ -335,3 +339,29 @@ def test_app_edit_rbac_check_is_declared(handler: Callable[..., object]) -> None
     assert checks[0].scene == RBACPermission.APP_EDIT
     assert isinstance(checks[0].locator, PlainApp)
     assert checks[0].locator.param == "app_id"
+
+
+@pytest.mark.parametrize(("kind", "mode"), [("chat", AppMode.CHAT), ("completion", AppMode.COMPLETION)])
+@pytest.mark.parametrize("created_today", [False, True])
+def test_delete_preserves_utc_date_policy(
+    harness: _Harness, monkeypatch: pytest.MonkeyPatch, kind: _Kind, mode: AppMode, created_today: bool
+) -> None:
+    now = datetime(2026, 11, 3, 0, 0, 1)
+    monkeypatch.setattr(conversation_lifecycle, "naive_utc_now", lambda: now)
+    harness.mode(mode)
+    with harness.factory.begin() as session:
+        conversation = session.get_one(Conversation, harness.conversation.id)
+        conversation.created_at = now if created_today else now - timedelta(seconds=2)
+
+    response = harness.delete(kind)
+
+    assert response.status_code == (HTTPStatus.BAD_REQUEST if created_today else HTTPStatus.NO_CONTENT)
+    if created_today:
+        assert response.json is not None
+        assert response.json["message"] == "Today's conversations cannot be deleted."
+        harness.assert_unchanged()
+    else:
+        with harness.factory() as session:
+            conversation = session.get_one(Conversation, harness.conversation.id)
+            assert conversation.is_deleted
+            assert conversation.updated_at == now

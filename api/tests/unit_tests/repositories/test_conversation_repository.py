@@ -1823,6 +1823,7 @@ def deletion_data(sqlite_session_factory: sessionmaker[Session]) -> ConsoleDelet
             from_end_user_id=None,
             is_deleted=False,
         )
+        conversation.created_at = _TIME
         session.add(conversation)
         session.flush()
         workspaces = [
