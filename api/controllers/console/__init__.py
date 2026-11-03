@@ -141,6 +141,7 @@ def _register_controllers() -> tuple[ModuleType, ...]:
     # Import other controllers
     from . import (
         apikey,
+        enterprise_webapp,
         extension,
         feature,
         human_input_form,
@@ -267,6 +268,7 @@ def _register_controllers() -> tuple[ModuleType, ...]:
 
     return (
         apikey,
+        enterprise_webapp,
         extension,
         feature,
         human_input_form,

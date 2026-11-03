@@ -10,7 +10,6 @@ from odfdo import Paragraph
 
 from core.app.entities.app_invoke_entities import InvokeFrom, UserFrom
 from core.workflow.node_factory import DifyNodeFactory
-from graphon.entities import GraphInitParams
 from graphon.enums import BuiltinNodeTypes, WorkflowNodeExecutionStatus
 from graphon.file import File, FileTransferMethod, FileType
 from graphon.node_events import NodeRunResult
@@ -87,8 +86,8 @@ def test_workflow_docx_comment_option(graph_init_params, extract_comments, array
     node = node_class(
         node_id="extractor",
         data=data,
-        graph_init_params=graph_init_params,
-        graph_runtime_state=runtime,
+        init_params=graph_init_params,
+        runtime_state=runtime,
         http_client=http_client,
     )
 

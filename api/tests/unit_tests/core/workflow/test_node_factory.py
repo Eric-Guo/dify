@@ -22,6 +22,7 @@ from core.workflow import template_rendering as workflow_template_rendering
 from core.workflow.llm_node import DifyLLMNode
 from core.workflow.node_factory import DifyNodeFactory, get_node_type_classes_mapping
 from core.workflow.node_runtime import DifyPreparedLLM
+from core.workflow.nodes.document_extractor.node import DocumentExtractorNode
 from core.workflow.nodes.knowledge_index import KNOWLEDGE_INDEX_NODE_TYPE
 from graphon.entities.base_node_data import BaseNodeData
 from graphon.enums import BuiltinNodeTypes, NodeExecutionType, NodeType
@@ -74,10 +75,6 @@ class DummyHttpRequestNode(DummyNode):
 
 
 class DummyKnowledgeRetrievalNode(DummyNode):
-    pass
-
-
-class DummyDocumentExtractorNode(DummyNode):
     pass
 
 
@@ -199,14 +196,24 @@ class TestNodeFactoryCases:
             assert isinstance(node, DummyKnowledgeRetrievalNode)
             assert node.kwargs == {}
 
-        def test_create_node_document_extractor_branch(self, monkeypatch: pytest.MonkeyPatch):
-            factory = self._factory()
-            self._stub_node_resolution(monkeypatch, DummyDocumentExtractorNode)
+        @pytest.mark.parametrize("extract_comments", [None, False, True])
+        def test_create_node_document_extractor_branch(self, extract_comments: bool | None):
+            factory = DifyNodeFactory(
+                init_params=build_test_graph_init_params(),
+                runtime_state=RuntimeState(variable_pool=VariablePool(), start_at=0, workflow_id="workflow"),
+            )
+            data = {
+                "type": BuiltinNodeTypes.DOCUMENT_EXTRACTOR,
+                "title": "Document Extractor",
+                "variable_selector": ["start", "file"],
+            }
+            if extract_comments is not None:
+                data["is_extract_comments"] = extract_comments
 
-            node = factory.create_node({"id": "node-1", "data": {"type": BuiltinNodeTypes.DOCUMENT_EXTRACTOR}})
+            node = factory.create_node({"id": "node-1", "data": data})
 
-            assert isinstance(node, DummyDocumentExtractorNode)
-            assert "unstructured_api_config" in node.kwargs
+            assert isinstance(node, DocumentExtractorNode)
+            assert node.node_data.is_extract_comments is (extract_comments is True)
 
 
 # Import concrete nodes we will assert on (numeric version path)

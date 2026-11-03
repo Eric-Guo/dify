@@ -8,6 +8,7 @@ in-memory SQLite sessions with persisted ORM rows.
 """
 
 from dataclasses import replace
+from datetime import timedelta
 from unittest.mock import MagicMock
 
 import pytest
@@ -28,6 +29,8 @@ from repositories.conversation_lifecycle import retire_conversation
 from services import conversation_service
 from services.agent.workspace_service import AgentWorkspaceNotFoundError, WorkspaceOwnerScope
 from services.conversation_service import ConversationService
+from services.errors.conversation import ConversationCannotDeleteTodayError
+from tasks.delete_conversation_task import delete_conversation_related_data
 
 TENANT_ID = "11111111-1111-1111-1111-111111111111"
 APP_ID = "22222222-2222-2222-2222-222222222222"
@@ -142,7 +145,7 @@ class ConversationServiceTestDataFactory:
             is_deleted=kwargs.get("is_deleted", False),
         )
         conversation._inputs = {}
-        conversation.created_at = kwargs.get("created_at", naive_utc_now())
+        conversation.created_at = kwargs.get("created_at", naive_utc_now() - timedelta(days=1))
         conversation.updated_at = kwargs.get("updated_at", naive_utc_now())
         for key, value in kwargs.items():
             setattr(conversation, key, value)
@@ -182,7 +185,7 @@ def test_retire_leaves_commit_and_cleanup_to_the_caller(
     enqueue_collection = MagicMock()
     delete_related = MagicMock()
     monkeypatch.setattr(conversation_service, "enqueue_agent_resource_collection", enqueue_collection)
-    monkeypatch.setattr(conversation_service.delete_conversation_related_data, "delay", delete_related)
+    monkeypatch.setattr(delete_conversation_related_data, "delay", delete_related)
 
     retired_workspace_ids = retire_conversation(app_model=app, conversation=conversation, session=sqlite_session)
     sqlite_session.flush()
@@ -242,12 +245,12 @@ def test_retire_rejects_participants_owned_by_another_scope(
     assert binding.status == workspace.status == AgentWorkingResourceStatus.ACTIVE
 
 
-def test_cleanup_propagates_agent_enqueue_failure_before_conversation_enqueue(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cleanup_propagates_agent_enqueue_failure_without_permanent_deletion(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         conversation_service, "enqueue_agent_resource_collection", MagicMock(side_effect=RuntimeError("unavailable"))
     )
     delete_related = MagicMock()
-    monkeypatch.setattr(conversation_service.delete_conversation_related_data, "delay", delete_related)
+    monkeypatch.setattr(delete_conversation_related_data, "delay", delete_related)
 
     with pytest.raises(RuntimeError, match="unavailable"):
         ConversationService.enqueue_delete_cleanup(
@@ -257,14 +260,14 @@ def test_cleanup_propagates_agent_enqueue_failure_before_conversation_enqueue(mo
     delete_related.assert_not_called()
 
 
-def test_cleanup_keeps_soft_deleted_marker_when_dispatch_fails(
+def test_cleanup_retains_conversation_without_dispatching_permanent_deletion(
     monkeypatch: pytest.MonkeyPatch, sqlite_session: Session
 ) -> None:
     conversation = ConversationServiceTestDataFactory.create_conversation(is_deleted=True)
     sqlite_session.add(conversation)
     sqlite_session.commit()
     monkeypatch.setattr(
-        conversation_service.delete_conversation_related_data,
+        delete_conversation_related_data,
         "delay",
         MagicMock(side_effect=RuntimeError("broker unavailable")),
     )
@@ -273,6 +276,26 @@ def test_cleanup_keeps_soft_deleted_marker_when_dispatch_fails(
         tenant_id=TENANT_ID, conversation_id=conversation.id, retired_workspace_ids=()
     )
 
+    delete_conversation_related_data.delay.assert_not_called()
     persisted = sqlite_session.get(Conversation, conversation.id)
     assert persisted is not None
     assert persisted.is_deleted is True
+
+
+def test_retire_rejects_today_without_mutating_workspace(
+    sqlite_session: Session,
+    conversation_workspace: tuple[AgentWorkspace, AgentWorkspaceBinding],
+) -> None:
+    workspace, binding = conversation_workspace
+    app = ConversationServiceTestDataFactory.create_app()
+    conversation = ConversationServiceTestDataFactory.create_conversation(created_at=naive_utc_now())
+    conversation.agent_workspace_binding_id = binding.id
+    sqlite_session.add(conversation)
+    sqlite_session.commit()
+
+    with pytest.raises(ConversationCannotDeleteTodayError):
+        retire_conversation(app_model=app, conversation=conversation, session=sqlite_session)
+
+    assert conversation.is_deleted is False
+    assert workspace.status == binding.status == AgentWorkingResourceStatus.ACTIVE
+    assert workspace.retired_at is None

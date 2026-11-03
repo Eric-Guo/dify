@@ -2225,7 +2225,7 @@ class TestWorkflowServiceCases:
                 service._validate_workflow_credentials(workflow, session=sqlite_session)
                 mock_check.assert_called_once()
 
-        def test_validate_workflow_credentials_should_check_default_credential_when_no_credential_id(
+        def test_validate_workflow_credentials_defers_default_tool_credential_until_execution(
             self, service: WorkflowService, sqlite_session: Session
         ) -> None:
             # Arrange
@@ -2235,7 +2235,7 @@ class TestWorkflowServiceCases:
                     "data": {
                         "type": "tool",
                         "provider_id": "my-provider",
-                        # No credential_id — should fall back to default
+                        # No credential_id: resolve the workspace default at execution.
                     },
                 }
             ]
@@ -2246,7 +2246,7 @@ class TestWorkflowServiceCases:
                 service._validate_workflow_credentials(workflow, session=sqlite_session)
 
             # Assert
-            mock_default.assert_called_once_with("tenant-1", "my-provider", session=sqlite_session)
+            mock_default.assert_not_called()
 
         def test_validate_workflow_credentials_should_skip_tool_node_without_provider(
             self, service: WorkflowService, sqlite_session: Session

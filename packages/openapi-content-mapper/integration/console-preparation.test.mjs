@@ -20,6 +20,15 @@ const files = [
 test('every existing Console member retains its name, HTTP method and route', (t) => {
   const before = files.map((file) => existsSync(file))
   const document = loadConsoleDocument()
+  for (const [path, method] of [
+    ['/enterprise/webapp/app/access-mode', 'get'],
+    ['/enterprise/webapp/app/access-mode', 'post'],
+    ['/enterprise/webapp/app/subject/search', 'get'],
+    ['/enterprise/webapp/app/subjects', 'get'],
+    ['/enterprise/webapp/permission', 'get'],
+  ]) {
+    assert.equal(document.paths[path][method].operationId, `enterprise_${method}_${path}`)
+  }
   assert.deepEqual(loadConsoleDocument(), document, 'In-memory composition must be deterministic')
   assert.deepEqual(
     files.map((file) => existsSync(file)),

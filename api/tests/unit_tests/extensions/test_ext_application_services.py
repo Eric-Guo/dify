@@ -1889,8 +1889,8 @@ def test_installed_app_conversations_wire_real_persistence_naming_and_retention(
             from_account_id=account_id,
             from_end_user_id=None,
             invoke_from=ModelInvokeFrom.EXPLORE,
-            created_at=naive_utc_now() - timedelta(days=1),
         )
+        conversation.created_at = naive_utc_now() - timedelta(days=1)
         session.add(conversation)
         session.flush()
         conversation_id = conversation.id

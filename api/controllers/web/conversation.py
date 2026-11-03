@@ -27,7 +27,11 @@ from libs.external_api import error_responses
 from libs.helper import dump_response, uuid_value
 from models.model import App, AppMode, EndUser
 from services.entities.conversation_entities import EndUserConversationRef, EndUserConversationScope
-from services.errors.conversation import ConversationCannotDeleteTodayError, ConversationNotExistsError, LastConversationNotExistsError
+from services.errors.conversation import (
+    ConversationCannotDeleteTodayError,
+    ConversationNotExistsError,
+    LastConversationNotExistsError,
+)
 from services.errors.message import MessageNotExistsError
 
 

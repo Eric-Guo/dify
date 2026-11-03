@@ -28,6 +28,7 @@ from fields._value_type_serializer import serialize_value_type
 from fields.base import ResponseModel
 from fields.conversation_fields import (
     ConversationInfiniteScrollPagination,
+    ResultResponse,
     SimpleConversation,
 )
 from graphon.variables.types import SegmentType
@@ -162,6 +163,7 @@ register_response_schema_models(
     ConversationVariableResponse,
     ConversationVariableInfiniteScrollPaginationResponse,
     ConversationInfiniteScrollPagination,
+    ResultResponse,
     SimpleConversation,
 )
 
@@ -326,6 +328,7 @@ class ConversationRenameApi(Resource):
 @service_api_ns.route("/conversations/<uuid:c_id>/pin")
 class ConversationPinApi(Resource):
     @error_responses(NotChatAppError, ConversationNotFoundHTTPError)
+    @service_api_ns.response(HTTPStatus.OK, "Conversation pinned", service_api_ns.models[ResultResponse.__name__])
     @service_api_ns.doc("pin_conversation")
     @service_api_ns.doc(params={"c_id": "Conversation ID"})
     @expect_user_json(service_api_ns)
@@ -355,6 +358,7 @@ class ConversationPinApi(Resource):
 @service_api_ns.route("/conversations/<uuid:c_id>/unpin")
 class ConversationUnPinApi(Resource):
     @error_responses(NotChatAppError, ConversationNotFoundHTTPError)
+    @service_api_ns.response(HTTPStatus.OK, "Conversation unpinned", service_api_ns.models[ResultResponse.__name__])
     @service_api_ns.doc("unpin_conversation")
     @service_api_ns.doc(params={"c_id": "Conversation ID"})
     @expect_user_json(service_api_ns)

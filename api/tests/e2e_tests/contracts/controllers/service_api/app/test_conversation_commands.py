@@ -1,6 +1,7 @@
 """Delete contracts using real API tokens, EndUser admission, and SQLite writes."""
 
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from http import HTTPStatus
 from uuid import uuid4
 
@@ -10,12 +11,14 @@ from sqlalchemy.orm import Session, SessionTransaction
 from werkzeug.test import TestResponse
 
 from constants.resource_access_token import ResourceAccessTokenResourceType
-from controllers.service_api.app.conversation import ConversationDetailApi
+from controllers.service_api.app.conversation import ConversationDetailApi, ConversationPinApi, ConversationUnPinApi
 from machinery.context import RequestContext
 from models import Tenant, TenantStatus
 from models.enums import ConversationFromSource
 from models.model import App, AppMode, Conversation, EndUser
 from models.resource_access_token import ResourceAccessToken
+from models.web import PinnedConversation
+from repositories import conversation_lifecycle
 from repositories.conversation_repository import ConversationRepository
 from services.auth.resource_access_token_contracts import ResourceAccessTokenResource
 from services.conversation_command_service import ConversationCommandService
@@ -87,6 +90,8 @@ def harness(rename_harness: RenameHarness) -> _Harness:
         ),
     )
     rename_harness.api.add_resource(ConversationDetailApi, "/conversations/<uuid:conversation_id>")
+    rename_harness.api.add_resource(ConversationPinApi, "/conversations/<uuid:c_id>/pin")
+    rename_harness.api.add_resource(ConversationUnPinApi, "/conversations/<uuid:c_id>/unpin")
     return _Harness(rename_harness, cleanups)
 
 
@@ -296,3 +301,54 @@ def test_failed_delete_commit_rolls_back_without_publishing_cleanup(harness: _Ha
     assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
     harness.assert_not_deleted()
     source.assert_closed()
+
+
+@pytest.mark.parametrize("created_today", [False, True])
+def test_delete_preserves_utc_date_policy(
+    harness: _Harness, monkeypatch: pytest.MonkeyPatch, created_today: bool
+) -> None:
+    now = datetime(2026, 11, 3, 0, 0, 1)
+    monkeypatch.setattr(conversation_lifecycle, "naive_utc_now", lambda: now)
+    with harness.source.factory.begin() as session:
+        conversation = session.get_one(Conversation, harness.source.conversation.id)
+        conversation.created_at = now if created_today else now - timedelta(seconds=2)
+
+    response = harness.delete()
+
+    assert response.status_code == (HTTPStatus.BAD_REQUEST if created_today else HTTPStatus.NO_CONTENT)
+    if created_today:
+        assert response.json is not None
+        assert response.json["message"] == "Today's conversations cannot be deleted."
+        harness.assert_not_deleted()
+    else:
+        with harness.source.factory() as session:
+            conversation = session.get_one(Conversation, harness.source.conversation.id)
+            assert conversation.is_deleted
+            assert conversation.updated_at == now
+    harness.source.assert_closed()
+
+
+@pytest.mark.parametrize("mode", [AppMode.CHAT, AppMode.AGENT])
+def test_pin_and_unpin_use_admitted_end_user_scope(harness: _Harness, mode: AppMode) -> None:
+    source = harness.source
+    with source.factory.begin() as session:
+        session.get_one(App, source.target.id).mode = mode
+    client = source.app.test_client()
+    for action, expected_count in [("pin", 1), ("pin", 1), ("unpin", 0), ("unpin", 0)]:
+        response = client.patch(
+            f"/conversations/{source.conversation.id}/{action}",
+            json={"user": "alice"},
+            headers={"Authorization": "Bearer rename-token"},
+        )
+        assert response.status_code == HTTPStatus.OK
+        assert response.json == {"result": "success"}
+        with source.factory() as session:
+            pins = session.scalars(
+                select(PinnedConversation).where(
+                    PinnedConversation.conversation_id == source.conversation.id,
+                    PinnedConversation.created_by == source.end_user.id,
+                )
+            ).all()
+            assert len(pins) == expected_count
+        source.assert_closed()
+    assert harness.cleanups == []

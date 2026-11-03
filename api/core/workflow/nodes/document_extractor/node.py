@@ -1,7 +1,7 @@
 import io
 import logging
 from collections.abc import Mapping
-from typing import cast, override
+from typing import override
 
 import docx
 
@@ -46,12 +46,16 @@ class DocumentExtractorNode(GraphonDocumentExtractorNode):
     @property
     @override
     def node_data(self) -> DocumentExtractorNodeData:
-        return cast(DocumentExtractorNodeData, super().node_data)
+        """Return validated comment-aware data; reject an incompatible node configuration."""
+        data = super().node_data
+        if not isinstance(data, DocumentExtractorNodeData):
+            raise TypeError("Expected document extractor data with comment configuration.")
+        return data
 
     @override
     def _run(self) -> NodeRunResult:
         variable_selector = self.node_data.variable_selector
-        variable = self.graph_runtime_state.variable_pool.get(variable_selector)
+        variable = self.runtime_state.variable_pool.get(variable_selector)
 
         error_message = None
         if variable is None:
