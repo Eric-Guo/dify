@@ -263,20 +263,22 @@ def test_cleanup_propagates_agent_enqueue_failure_without_permanent_deletion(mon
 def test_cleanup_retains_conversation_without_dispatching_permanent_deletion(
     monkeypatch: pytest.MonkeyPatch, sqlite_session: Session
 ) -> None:
+    """Given a soft-deleted row, cleanup preserves it without dispatching permanent deletion."""
     conversation = ConversationServiceTestDataFactory.create_conversation(is_deleted=True)
     sqlite_session.add(conversation)
     sqlite_session.commit()
+    delete_related = MagicMock(side_effect=RuntimeError("broker unavailable"))
     monkeypatch.setattr(
         delete_conversation_related_data,
         "delay",
-        MagicMock(side_effect=RuntimeError("broker unavailable")),
+        delete_related,
     )
 
     ConversationService.enqueue_delete_cleanup(
         tenant_id=TENANT_ID, conversation_id=conversation.id, retired_workspace_ids=()
     )
 
-    delete_conversation_related_data.delay.assert_not_called()
+    delete_related.assert_not_called()
     persisted = sqlite_session.get(Conversation, conversation.id)
     assert persisted is not None
     assert persisted.is_deleted is True
